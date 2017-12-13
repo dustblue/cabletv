@@ -85,7 +85,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
 
-    public List<User> getAllEvents() {
+    public List<User> getAllUsers() {
         List<User> usersList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
 

@@ -3,16 +3,19 @@ package com.rakesh.cabletv;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -223,7 +226,20 @@ public class EditActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        //TODO Dialog
+        new AlertDialog.Builder(this)
+                .setTitle("Discard")
+                .setMessage("Do you want to exit? Changes will not be saved!")
+                .setPositiveButton("YES, exit", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditActivity.super.onBackPressed();
+                        Toast.makeText(getApplicationContext(), "Discarded changes", Toast.LENGTH_SHORT).show();
+
+                    }
+                }).setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                }).show();
     }
 
 }
