@@ -13,7 +13,7 @@
         android:id="@+id/name_edit"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:text="@string/name"
+        android:hint="@string/name"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -22,7 +22,8 @@
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/padding_edit"
-        android:text="@string/mobile"
+        android:inputType="phone"
+        android:hint="@string/mobile"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/name_edit" />
@@ -32,7 +33,7 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/padding_edit"
-        android:text="@string/address"
+        android:hint="@string/address"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/phone_edit" />
 
@@ -41,7 +42,7 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/padding_edit"
-        android:text="@string/caf"
+        android:hint="@string/caf"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/address_edit" />
@@ -51,7 +52,7 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/padding_edit"
-        android:text="@string/vc"
+        android:hint="@string/vc"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/caf_edit" />
@@ -62,7 +63,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/padding_edit"
         android:layout_marginTop="8dp"
-        android:text="@string/active"
+        android:hint="@string/active"
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/caf_edit"
         app:layout_constraintTop_toTopOf="@+id/caf_edit" />
@@ -72,7 +73,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/padding_edit"
-        android:text="@string/installed_on"
+        android:hint="@string/installed_on"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/vc_edit" />

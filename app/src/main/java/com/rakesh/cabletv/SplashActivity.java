@@ -24,6 +24,9 @@ public class SplashActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!hasPermissions(this, allPermissions)) {
                 requestPermissions(allPermissions, 10);
+            } else {
+                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                finish();
             }
         }
     }

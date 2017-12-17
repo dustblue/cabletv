@@ -1,5 +1,6 @@
 package com.rakesh.cabletv;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -106,7 +107,7 @@ public class EditActivity extends AppCompatActivity {
                 day = i2;
                 month = i1;
                 year = i;
-                installDateField.setText(i2 + "/" + i1 + 1 + "/" + 1);
+                installDateField.setText(i2 + "/" + (i1 + 1) + "/" + i);
             }
         }, year, month, day);
         datePickerDialog.setTitle("Select Date");
@@ -147,22 +148,22 @@ public class EditActivity extends AppCompatActivity {
                                 new saveTask(this).execute();
 
                             } else {
-                                makeSnackBar("Enter the Name!", 0);
+                                makeSnackBar("Pick an Install Date!", 0);
                             }
                         } else {
-                            makeSnackBar("Enter a valid Number!", 1);
+                            makeSnackBar("Enter the VC!", 1);
                         }
                     } else {
-                        makeSnackBar("Enter the Address!", 2);
+                        makeSnackBar("Enter the CAF!", 2);
                     }
                 } else {
-                    makeSnackBar("Enter the CAF!", 3);
+                    makeSnackBar("Enter the Address!", 3);
                 }
             } else {
-                makeSnackBar("Enter the VC!", 4);
+                makeSnackBar("Enter a valid Number!", 4);
             }
         } else {
-            makeSnackBar("Pick an Install Date!", 5);
+            makeSnackBar("Enter the Name!", 5);
         }
     }
 
@@ -172,7 +173,7 @@ public class EditActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         if (viewID == 0)
-                            nameField.requestFocus();
+                            installDateField.requestFocus();
                         else if (viewID == 1)
                             phoneField.requestFocus();
                         else if (viewID == 2)
@@ -182,18 +183,18 @@ public class EditActivity extends AppCompatActivity {
                         else if (viewID == 4)
                             vcField.requestFocus();
                         else if (viewID == 5)
-                            installDateField.requestFocus();
+                            nameField.requestFocus();
                     }
                 }).show();
     }
 
     private class saveTask extends AsyncTask<Void, Void, Void> {
         private ProgressDialog dialog;
-        private Context mContext;
+        private Activity mActivity;
 
         public saveTask(EditActivity activity) {
             dialog = new ProgressDialog(activity);
-            mContext = activity.getApplicationContext();
+            mActivity = activity;
         }
 
         @Override
@@ -220,7 +221,7 @@ public class EditActivity extends AppCompatActivity {
             if (dialog.isShowing()) {
                 dialog.dismiss();
             }
-            ((EditActivity) mContext).finish();
+            mActivity.finish();
         }
     }
 
