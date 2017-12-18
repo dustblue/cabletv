@@ -14,13 +14,13 @@ public class MainActivity extends AppCompatActivity {
     private final String items[] = {
             "Add User",
             "All Users",
-            "Unpaid"
+            "Clusters"
     };
 
     private final int itemImages[] = {
             R.drawable.ic_add_user,
             R.drawable.ic_all_users,
-            R.drawable.ic_un_paid,
+            R.drawable.ic_clusters,
     };
 
     @Override

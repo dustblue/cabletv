@@ -85,33 +85,6 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
 
-    public List<User> getAllUsers() {
-        List<User> usersList = new ArrayList<>();
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
-        if (cursor.moveToFirst()) {
-            do {
-                User user = new User();
-
-                user.setVc(cursor.getString(0));
-                user.setCaf(cursor.getString(1));
-                user.setName(cursor.getString(2));
-                user.setPhone(cursor.getString(3));
-                user.setAddress(cursor.getString(4));
-                user.setCluster(cursor.getString(5));
-                user.setInstallDate(cursor.getString(6));
-                user.setStatus((cursor.getInt(7) > 0));
-
-                usersList.add(user);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        db.close();
-
-        return usersList;
-    }
-
     public User getUser(String vc) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE "
@@ -136,10 +109,39 @@ public class DBHandler extends SQLiteOpenHelper {
         return user;
     }
 
-    public List<User> getUsersByCluster(String cluster) {
+    public List<User> getAllUsers(Boolean all) {
         List<User> usersList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
 
+        //TODO if all = false then get unpaid
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+        if (cursor.moveToFirst()) {
+            do {
+                User user = new User();
+
+                user.setVc(cursor.getString(0));
+                user.setCaf(cursor.getString(1));
+                user.setName(cursor.getString(2));
+                user.setPhone(cursor.getString(3));
+                user.setAddress(cursor.getString(4));
+                user.setCluster(cursor.getString(5));
+                user.setInstallDate(cursor.getString(6));
+                user.setStatus((cursor.getInt(7) > 0));
+
+                usersList.add(user);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        return usersList;
+    }
+
+    public List<User> getUsersByCluster(String cluster, Boolean all) {
+        List<User> usersList = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        //TODO if all = false then get unpaid
         String selectQuery = "SELECT * FROM " + TABLE_NAME + " WHERE cluster is " + "\"" + cluster + "\"";
         Cursor cursor = db.rawQuery(selectQuery, null);
 

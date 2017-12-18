@@ -205,7 +205,7 @@ public class EditActivity extends AppCompatActivity {
         }
 
         protected Void doInBackground(Void... args) {
-            User user = new User(name, phone, address, "",
+            User user = new User(name, phone, address, address.split(",")[1],
                     caf, vc1, installDate, isActive.isChecked());
 
             if (editFlag)
