@@ -4,7 +4,6 @@ package com.rakesh.cabletv;
  * Created by Rakesh on 16-12-2017.
  */
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,13 +15,11 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
 
     private String[] items;
     private int[] itemImages;
-    private Context mContext;
 
 
-    public GridAdapter(Context context, String[] items, int[] itemImages) {
+    GridAdapter(String[] items, int[] itemImages) {
         this.items = items;
         this.itemImages = itemImages;
-        this.mContext = context;
     }
 
     @Override
@@ -34,7 +31,11 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(GridAdapter.ViewHolder holder, int position) {
         holder.itemTitle.setText(items[position]);
-        holder.itemImage.setImageResource(itemImages[position]);
+        if (itemImages.length != 0)
+            holder.itemImage.setImageResource(itemImages[position]);
+        else
+            holder.itemImage.setImageResource(R.drawable.ic_launcher_foreground);
+
     }
 
     @Override

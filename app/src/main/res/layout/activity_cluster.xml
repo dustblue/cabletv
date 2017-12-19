@@ -6,4 +6,12 @@
     android:layout_height="match_parent"
     tools:context="com.rakesh.cabletv.ClusterActivity">
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/cluster_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </android.support.constraint.ConstraintLayout>

@@ -32,6 +32,16 @@
         app:srcCompat="@drawable/ic_edit" />
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/transactions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="@dimen/big_padding"
+        android:layout_marginEnd="@dimen/padding"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/ic_transaction" />
+
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/ok"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

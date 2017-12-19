@@ -65,37 +65,23 @@ public class EditActivity extends AppCompatActivity {
         user.setInstallDate("Installed On: 01/12/17");
         */
 
-
-        installDateField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDatePicker();
-            }
-        });
+        installDateField.setOnClickListener(view -> showDatePicker());
 
         fabSave = (FloatingActionButton) findViewById(R.id.ok_edit);
-        fabSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                name = nameField.getText().toString();
-                phone = phoneField.getText().toString();
-                address = addressField.getText().toString();
-                caf = cafField.getText().toString();
-                vc1 = vcField.getText().toString();
-                installDate = installDateField.getText().toString();
-                validateAndSave();
+        fabSave.setOnClickListener(view -> {
+            name = nameField.getText().toString();
+            phone = phoneField.getText().toString();
+            address = addressField.getText().toString();
+            caf = cafField.getText().toString();
+            vc1 = vcField.getText().toString();
+            installDate = installDateField.getText().toString();
+            validateAndSave();
 
-            }
         });
 
         fabDelete = (FloatingActionButton) findViewById(R.id.delete);
-        fabDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Edit yet to be implemented", Snackbar.LENGTH_LONG)
-                        .setAction("OK", null).show();
-            }
-        });
+        fabDelete.setOnClickListener(view -> Snackbar.make(view, "Delete yet to be implemented", Snackbar.LENGTH_LONG)
+                .setAction("OK", null).show());
 
     }
 
@@ -221,6 +207,7 @@ public class EditActivity extends AppCompatActivity {
             if (dialog.isShowing()) {
                 dialog.dismiss();
             }
+            setResult(RESULT_OK);
             mActivity.finish();
         }
     }

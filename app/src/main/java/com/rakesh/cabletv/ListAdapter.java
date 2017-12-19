@@ -12,18 +12,17 @@ import android.widget.TextView;
 
 import java.util.List;
 
-
 class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> {
 
     private List<User> users;
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView title, interval;
+        TextView name, lastPaidDate;
 
         MyViewHolder(View view) {
             super(view);
-            title = (TextView) view.findViewById(R.id.item_name);
-            interval = (TextView) view.findViewById(R.id.item_status);
+            name = (TextView) view.findViewById(R.id.item_name);
+            lastPaidDate = (TextView) view.findViewById(R.id.item_last_paid_date);
         }
     }
 
@@ -43,8 +42,9 @@ class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> {
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         User user = users.get(position);
-        holder.title.setText(user.getName());
-        //holder.interval.setText(parseTime(user.getStartTime(), user.getEndTime()));
+        holder.name.setText(user.getName());
+        //YKWTODO
+        holder.lastPaidDate.setText(user.getInstallDate());
     }
 
     @Override
