@@ -26,6 +26,7 @@ import java.util.Locale;
 
 public class EditActivity extends AppCompatActivity {
 
+    ProgressDialog dialog;
     DBHandler db;
     FloatingActionButton fabSave, fabDelete;
     EditText nameField, phoneField, addressField, cafField, vcField, installDateField;
@@ -155,22 +156,19 @@ public class EditActivity extends AppCompatActivity {
 
     public void makeSnackBar(String text, final int viewID) {
         Snackbar.make(parent, text, Snackbar.LENGTH_SHORT)
-                .setAction("GO", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (viewID == 0)
-                            installDateField.requestFocus();
-                        else if (viewID == 1)
-                            phoneField.requestFocus();
-                        else if (viewID == 2)
-                            addressField.requestFocus();
-                        else if (viewID == 3)
-                            cafField.requestFocus();
-                        else if (viewID == 4)
-                            vcField.requestFocus();
-                        else if (viewID == 5)
-                            nameField.requestFocus();
-                    }
+                .setAction("GO", view -> {
+                    if (viewID == 0)
+                        installDateField.requestFocus();
+                    else if (viewID == 1)
+                        vcField.requestFocus();
+                    else if (viewID == 2)
+                        cafField.requestFocus();
+                    else if (viewID == 3)
+                        addressField.requestFocus();
+                    else if (viewID == 4)
+                        phoneField.requestFocus();
+                    else if (viewID == 5)
+                        nameField.requestFocus();
                 }).show();
     }
 
@@ -230,4 +228,11 @@ public class EditActivity extends AppCompatActivity {
                 }).show();
     }
 
+    @Override
+    protected void onStop() {
+//        if (dialog.isShowing()) {
+//            dialog.dismiss();
+//        }
+        super.onStop();
+    }
 }

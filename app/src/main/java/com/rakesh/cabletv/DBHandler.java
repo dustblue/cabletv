@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +37,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_EVENTS_TABLE = "CREATE TABLE " + TABLE_NAME + "("
+        String CREATE_EVENTS_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "("
                 + KEY_VC + " TEXT PRIMARY KEY," + KEY_CAF + " TEXT,"
                 + KEY_NAME + " TEXT," + KEY_PHONE + " TEXT,"
                 + KEY_ADDRESS + " TEXT," + KEY_CLUSTER + " TEXT,"
@@ -129,9 +130,16 @@ public class DBHandler extends SQLiteOpenHelper {
                 user.setInstallDate(cursor.getString(6));
                 user.setStatus((cursor.getInt(7) > 0));
 
+                //debug
+
+                for (int i = 0; i < 8; i++)
+                    Log.e(TAG, cursor.getString(i));
+                Log.e(TAG, "\n");
+
                 usersList.add(user);
             } while (cursor.moveToNext());
         }
+
         cursor.close();
         db.close();
 

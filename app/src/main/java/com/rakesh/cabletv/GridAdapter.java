@@ -31,7 +31,7 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(GridAdapter.ViewHolder holder, int position) {
         holder.itemTitle.setText(items[position]);
-        if (itemImages.length != 0)
+        if (itemImages != null)
             holder.itemImage.setImageResource(itemImages[position]);
         else
             holder.itemImage.setImageResource(R.drawable.ic_launcher_foreground);

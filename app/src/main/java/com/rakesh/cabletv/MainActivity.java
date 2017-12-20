@@ -45,8 +45,7 @@ public class MainActivity extends AppCompatActivity {
                                     startActivity(new Intent(MainActivity.this, ListActivity.class));
                                     break;
                                 case 2:
-                                    Intent i =new Intent(MainActivity.this, UserActivity.class);
-                                    i.putExtra("vc", 1234);
+                                    Intent i = new Intent(MainActivity.this, ClusterActivity.class);
                                     startActivity(i);
                                     break;
                                 default:
