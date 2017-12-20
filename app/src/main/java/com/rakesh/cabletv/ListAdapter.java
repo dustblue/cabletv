@@ -14,7 +14,7 @@ import java.util.List;
 
 class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> {
 
-    private List<User> users;
+    private List<User> mUsers;
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView name, lastPaidDate;
@@ -27,7 +27,7 @@ class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> {
     }
 
     ListAdapter(List<User> users) {
-        this.users = users;
+        this.mUsers = users;
     }
 
     @Override
@@ -41,7 +41,7 @@ class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> {
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        User user = users.get(position);
+        User user = mUsers.get(position);
         holder.name.setText(user.getName());
         //YKWTODO
         holder.lastPaidDate.setText(user.getInstallDate());
@@ -49,6 +49,6 @@ class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> {
 
     @Override
     public int getItemCount() {
-        return users.size();
+        return mUsers.size();
     }
 }

@@ -189,7 +189,7 @@ public class EditActivity extends AppCompatActivity {
         }
 
         protected Void doInBackground(Void... args) {
-            User user = new User(name, phone, address, address.split(",")[1],
+            User user = new User(name, phone, address, address.split(",")[1].trim(),
                     caf, vc1, installDate, isActive.isChecked());
 
             if (editFlag)
@@ -215,17 +215,11 @@ public class EditActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle("Discard")
                 .setMessage("Do you want to exit? Changes will not be saved!")
-                .setPositiveButton("YES, exit", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        EditActivity.super.onBackPressed();
-                        Toast.makeText(getApplicationContext(), "Discarded changes", Toast.LENGTH_SHORT).show();
+                .setPositiveButton("YES, exit", (dialog, which) -> {
+                    EditActivity.super.onBackPressed();
+                    Toast.makeText(getApplicationContext(), "Discarded changes", Toast.LENGTH_SHORT).show();
 
-                    }
-                }).setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                }).show();
+                }).setNegativeButton("NO", (dialog, which) -> dialog.cancel()).show();
     }
 
     @Override

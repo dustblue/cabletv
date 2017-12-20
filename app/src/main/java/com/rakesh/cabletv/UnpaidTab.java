@@ -33,19 +33,12 @@ public class UnpaidTab extends Fragment {
         listTitle = (TextView) v.findViewById(R.id.unpaid_list_title);
         recyclerView = (RecyclerView) v.findViewById(R.id.unpaid_list);
 
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        mAdapter = new ListAdapter(userList);
-        recyclerView.setAdapter(mAdapter);
-
-        db = new DBHandler(getContext());
-        userList = new ArrayList<>();
-
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             cluster = bundle.getString("cluster", "none");
         }
+
+        db = new DBHandler(getContext());
 
         if (cluster.equals("none")) {
             userList = db.getAllUsers(false);
@@ -54,9 +47,15 @@ public class UnpaidTab extends Fragment {
             userList = db.getUsersByCluster(cluster, false);
         }
 
-        mAdapter.notifyDataSetChanged();
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
         if (userList.isEmpty()) {
             emptyText.setVisibility(View.VISIBLE);
+        } else {
+            mAdapter = new ListAdapter(userList);
+            recyclerView.setAdapter(mAdapter);
         }
 
         recyclerView.addOnItemTouchListener(

@@ -4,6 +4,7 @@ package com.rakesh.cabletv;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -89,7 +90,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public User getUser(String vc) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE "
-                + KEY_VC + " is " + vc, null);
+                + KEY_VC + " is " + "\"" + vc + "\"", null);
 
         User user = new User();
         cursor.moveToFirst();
@@ -177,7 +178,8 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public String[] getClusters() {
-        String[] clusters = new String[15];
+        String[] clusters = new String[5];
+        //TODO Trim String Array.
         int i = 0;
         String select = "SELECT DISTINCT " + KEY_CLUSTER + " FROM " + TABLE_NAME;
 
@@ -187,17 +189,10 @@ public class DBHandler extends SQLiteOpenHelper {
                     List valid = Arrays.asList(clusters);
                     do {
                         String temp = cursor.getString(0);
-                        if (valid.contains(temp.toLowerCase())) {
-                            // is valid
-                            i--;
-                        } else {
-                            // not valid
-                            if (temp.equals(""))
-                                i--;
-                            else
-                                clusters[i] = temp.toLowerCase();
+                        if (!valid.contains(temp.toLowerCase()) && !temp.equals("")) {
+                                clusters[i] = temp;
+                            i++;
                         }
-                        i++;
                     } while (cursor.moveToNext());
                 }
             }

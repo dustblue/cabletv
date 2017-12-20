@@ -31,6 +31,8 @@ public class ListActivity extends AppCompatActivity {
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(adapter);
 
+        //TODO Remove extra height from SlidingTabStrip
+        //TODO Put Cluster name as Activity name
         tabs = (SlidingTabLayout) findViewById(R.id.tabs);
         tabs.setDistributeEvenly(true);
         tabs.setCustomTabColorizer(position -> R.color.colorPrimary );
