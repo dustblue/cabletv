@@ -10,6 +10,7 @@
     <string name="installed_on">Installed On</string>
     <string name="amount">Amount</string>
     <string name="installDate">Date</string>
+    <string name="dateTime">Time, Date</string>
     <string name="defAmount">210</string>
     <string name="title_activity_edit">EditActivity</string>
     <string name="save">Save</string>

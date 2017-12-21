@@ -12,13 +12,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -31,7 +31,7 @@ public class UserActivity extends AppCompatActivity {
     TextView nameText, phoneText, addressText, cafText, vcText, installDateText;
     EditText amountField, dateField;
     int year, month, day;
-    String vc, uri;
+    String vc, uri, amountText, dateText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,9 +84,12 @@ public class UserActivity extends AppCompatActivity {
         });
 
         fabOk.setOnClickListener(view -> {
-            if(!amountField.getText().toString().equals("")) {
-                if(!dateField.getText().toString().equals("")) {
-                    //TODO Update Transactions DB
+            amountText = amountField.getText().toString();
+            dateText = dateField.getText().toString();
+
+            if (!amountText.equals("")) {
+                if (!dateText.equals("")) {
+                    db.addTransaction(new Transaction(vc, amountText, dateText), Calendar.getInstance().getTime());
                 } else {
                     Snackbar.make(view, "Pick a Date", Snackbar.LENGTH_SHORT)
                             .setAction("GO", view1 -> showDatePicker()).show();
@@ -141,7 +144,7 @@ public class UserActivity extends AppCompatActivity {
                 day = i2;
                 month = i1;
                 year = i;
-                dateField.setText(i2 + "/" + i1+1 + "/" + 1);
+                dateField.setText(i2 + "/" + i1 + 1 + "/" + 1);
             }
         }, year, month, day);
         datePickerDialog.setTitle("Select Date");

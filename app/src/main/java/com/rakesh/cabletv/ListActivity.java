@@ -26,6 +26,7 @@ public class ListActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         cluster = intent.getStringExtra("cluster");
+        getSupportActionBar().setTitle(cluster);
 
         adapter = new ViewPagerAdapter(getSupportFragmentManager(), titles, numberOfTabs, cluster);
         pager = (ViewPager) findViewById(R.id.pager);
