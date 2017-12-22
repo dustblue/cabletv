@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -89,7 +88,7 @@ public class UserActivity extends AppCompatActivity {
 
             if (!amountText.equals("")) {
                 if (!dateText.equals("")) {
-                    db.addTransaction(new Transaction(vc, amountText, dateText), Calendar.getInstance().getTime());
+                    db.addTransaction(new Transaction(vc, amountText, dateText));
                 } else {
                     Snackbar.make(view, "Pick a Date", Snackbar.LENGTH_SHORT)
                             .setAction("GO", view1 -> showDatePicker()).show();

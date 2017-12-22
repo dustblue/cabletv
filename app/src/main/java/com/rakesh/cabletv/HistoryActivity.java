@@ -8,29 +8,27 @@ import android.support.v7.widget.RecyclerView;
 
 import java.util.List;
 
-public class TransactionActivity extends AppCompatActivity {
+public class HistoryActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
-    List<Transaction> transactionsList;
+    List<Entry> entries;
     DBHandler db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_transaction);
+        setContentView(R.layout.activity_history);
 
-        recyclerView = findViewById(R.id.transactions_list);
+        recyclerView = findViewById(R.id.history_list);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         db = new DBHandler(this);
-        String vc = getIntent().getStringExtra("vc");
-        String username = getIntent().getStringExtra("username");
 
-        transactionsList = db.getTransactionsByUser(vc);
-        TransactionsAdapter adapter = new TransactionsAdapter(transactionsList, username);
+        entries = db.getLog();
+        HistoryAdapter adapter = new HistoryAdapter(entries);
         recyclerView.setAdapter(adapter);
 
         recyclerView.addOnItemTouchListener(
@@ -42,6 +40,5 @@ public class TransactionActivity extends AppCompatActivity {
 //                            startActivityForResult(i, 10);
                         })
         );
-
     }
 }

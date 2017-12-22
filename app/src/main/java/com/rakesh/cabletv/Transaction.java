@@ -10,6 +10,9 @@ class Transaction {
     private String amount;
     private String dateTime;
 
+    Transaction() {
+    }
+
     Transaction(String vc, String amount, String dateTime) {
         this.vc = vc;
         this.amount = amount;

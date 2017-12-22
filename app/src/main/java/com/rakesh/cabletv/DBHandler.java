@@ -8,11 +8,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class DBHandler extends SQLiteOpenHelper {
 
@@ -57,13 +56,13 @@ public class DBHandler extends SQLiteOpenHelper {
                 + KEY_INSTALL_DATE + " TEXT," + KEY_STATUS + " BOOLEAN" + ")";
 
         String CREATE_TRANS_TABLE = "CREATE TABLE IF NOT EXISTS " + TRANSACTIONS_TABLE + "("
-                + KEY_ID + " INTEGER PRIMARY KEY, " + KEY_VC + " TEXT,"
+                + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + KEY_VC + " TEXT,"
                 + KEY_AMOUNT + " INTEGER," + KEY_DATE + " DATETIME, "
                 + "FOREIGN KEY (" + KEY_VC + ") REFERENCES " + USERS_TABLE
                 + "(" + KEY_VC + ")" + ")";
 
         String CREATE_LOG_TABLE = "CREATE TABLE IF NOT EXISTS " + LOG_TABLE + "("
-                + KEY_LOGDATE + " DATETIME PRIMARY KEY, " + KEY_ID + " INTEGER, "
+                + KEY_LOGDATE + " DATETIME DEFAULT CURRENT_TIMESTAMP PRIMARY KEY, " + KEY_ID + " INTEGER, "
                 + "FOREIGN KEY (" + KEY_ID + ") REFERENCES "
                 + TRANSACTIONS_TABLE + "(" + KEY_ID + ")" + ")";
 
@@ -110,7 +109,7 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_INSTALL_DATE, user.getInstallDate());
         values.put(KEY_STATUS, user.getStatus());
 
-        db.update(USERS_TABLE, values, "vc = " + "\"" + vc + "\"", null);
+        db.update(USERS_TABLE, values, KEY_VC + " = " + "\"" + vc + "\"", null);
         db.close();
 
     }
@@ -218,7 +217,7 @@ public class DBHandler extends SQLiteOpenHelper {
                     do {
                         String temp = cursor.getString(0);
                         if (!valid.contains(temp.toLowerCase()) && !temp.equals("")) {
-                                clusters[i] = temp;
+                            clusters[i] = temp;
                             i++;
                         }
                     } while (cursor.moveToNext());
@@ -229,10 +228,8 @@ public class DBHandler extends SQLiteOpenHelper {
         return clusters;
     }
 
-    public void addTransaction(Transaction t, Date date) {
+    public void addTransaction(Transaction t) {
         SQLiteDatabase db = this.getWritableDatabase();
-
-        updateLog(date);
 
         ContentValues values = new ContentValues();
         values.put(KEY_VC, t.getVc());
@@ -240,6 +237,13 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_DATE, t.getDateTime());
 
         db.insert(TRANSACTIONS_TABLE, null, values);
+        Cursor cursor = db.rawQuery("SELECT " + KEY_ID + " FROM " + TRANSACTIONS_TABLE
+                + " WHERE " + KEY_VC + " = " + "\"" + t.getVc() + "\"", null);
+        cursor.moveToFirst();
+        int i = Integer.parseInt(cursor.getString(0));
+        updateLog(i);
+
+        cursor.close();
         db.close();
     }
 
@@ -250,11 +254,90 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_AMOUNT, t.getAmount());
         values.put(KEY_DATE, t.getDateTime());
 
-        db.update(TRANSACTIONS_TABLE, values, "vc = " + "\"" + t.getVc() + "\"", null);
+        db.update(TRANSACTIONS_TABLE, values, KEY_VC + " = " + "\"" + t.getVc() + "\"", null);
         db.close();
     }
 
-    public void updateLog(Date date) {
-        //TODO UpdateLog
+    public List<Transaction> getTransactionsByUser(String vc) {
+        List<Transaction> transactions = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE + " WHERE " +
+                KEY_VC + " = " + "\"" + vc + "\"", null);
+        if (cursor.moveToFirst()) {
+            do {
+                Transaction transaction = new Transaction();
+
+                transaction.setVc(cursor.getString(1));
+                transaction.setAmount(cursor.getString(2));
+                transaction.setDateTime(cursor.getString(3));
+
+                //debug
+
+                for (int i = 0; i < 4; i++)
+                    Log.e(TAG, cursor.getString(i));
+                Log.e(TAG, "\n");
+
+                transactions.add(transaction);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        return transactions;
+    }
+
+    public void updateLog(int i) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.execSQL("INSERT INTO " + LOG_TABLE + " ( " + KEY_ID + " ) VALUES ( " + i + " )");
+        db.close();
+    }
+
+    public List<Entry> getLog() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        List<Entry> entries = new ArrayList<>();
+        String s = "";
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + LOG_TABLE
+                + " ORDER BY " + KEY_LOGDATE + " DESC", null);
+        Cursor c1, c2;
+
+        if (cursor.moveToFirst()) {
+            do {
+                s = cursor.getString(0);
+                int i = Integer.parseInt(cursor.getString(1));
+
+                c1 = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE
+                        + " WHERE " + KEY_ID + " is " + i, null);
+                c1.moveToFirst();
+
+                Transaction transaction = new Transaction();
+                transaction.setVc(c1.getString(1));
+                transaction.setAmount(c1.getString(2));
+                transaction.setDateTime(s);
+
+                c2 = db.rawQuery("SELECT " + KEY_NAME + " FROM " + USERS_TABLE + ", "
+                        + TRANSACTIONS_TABLE + " WHERE " + TRANSACTIONS_TABLE + "." + KEY_VC
+                        + " = " + USERS_TABLE + "." + KEY_VC
+                        + " AND " + KEY_ID + " is " + i, null);
+                c2.moveToFirst();
+
+                Entry entry = new Entry();
+                entry.setTransaction(transaction);
+                entry.setUserName(c2.getString(0));
+                entries.add(entry);
+
+                c1.close();
+                c2.close();
+
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        return entries;
     }
 }

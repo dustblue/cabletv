@@ -3,11 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rakesh.cabletv.TransactionActivity">
+    tools:context="com.rakesh.cabletv.HistoryActivity">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/transactions_list"
+        android:id="@+id/history_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding_edit"/>
+        android:padding="@dimen/padding_edit" />
+
 </android.support.constraint.ConstraintLayout>
