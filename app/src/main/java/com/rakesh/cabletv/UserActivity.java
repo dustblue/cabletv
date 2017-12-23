@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -15,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckedTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -91,11 +93,16 @@ public class UserActivity extends AppCompatActivity {
         });
 
         fabOk.setOnClickListener(view -> {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            }
             amountText = amountField.getText().toString();
             dateText = dateField.getText().toString();
 
             if (!amountText.equals("")) {
                 if (!dateText.equals("")) {
+                    //TODO Add Confirmation Alert Dialog
                     new saveTransaction(this).execute();
                 } else {
                     Snackbar.make(view, "Pick a Date", Snackbar.LENGTH_SHORT)

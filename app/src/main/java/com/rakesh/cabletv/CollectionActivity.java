@@ -127,6 +127,7 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
             }
 
         }, mStartYear, mStartMonth, mStartDay);
+        //FIXME Title not working
         datePickerDialog.setTitle("Select Date");
         datePickerDialog.show();
     }
@@ -154,12 +155,21 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
         TimePickerDialog mTimePicker;
         mTimePicker = new TimePickerDialog(CollectionActivity.this, (timePicker, selectedHour, selectedMinute) -> {
 
+            //FIXME 12 PM shows 00 PM
             mStartHour = selectedHour;
             mStartMinute = selectedMinute;
-            if (selectedMinute / 10 == 0) {
-                startTime.setText(selectedHour + ":0" + selectedMinute);
+            if (mStartHour >= 12) {
+                if (selectedMinute / 10 == 0) {
+                    startTime.setText((selectedHour-12) + ":0" + selectedMinute + " PM");
+                } else {
+                    startTime.setText((selectedHour-12) + ":" + selectedMinute + " PM");
+                }
             } else {
-                startTime.setText(selectedHour + ":" + selectedMinute);
+                if (selectedMinute / 10 == 0) {
+                    startTime.setText(selectedHour + ":0" + selectedMinute + " AM");
+                } else {
+                    startTime.setText(selectedHour + ":" + selectedMinute + " AM");
+                }
             }
 
             chosenStartTime.set(Calendar.HOUR, selectedHour);
@@ -171,19 +181,28 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
             }
 
         }, mStartHour, mStartMinute, false);
-        mTimePicker.setTitle("Start Time\n");
+        mTimePicker.setTitle("Start Time");
         mTimePicker.show();
     }
 
     public void showEndTimePickerDialog() {
         TimePickerDialog mTimePicker;
         mTimePicker = new TimePickerDialog(CollectionActivity.this, (timePicker, selectedHour, selectedMinute) -> {
+
             mEndHour = selectedHour;
             mEndMinute = selectedMinute;
-            if (selectedMinute / 10 == 0) {
-                endTime.setText(selectedHour + ":0" + selectedMinute);
+            if (mEndHour >= 12) {
+                if (selectedMinute / 10 == 0) {
+                    endTime.setText((selectedHour-12) + ":0" + selectedMinute + " PM");
+                } else {
+                    endTime.setText((selectedHour-12) + ":" + selectedMinute + " PM");
+                }
             } else {
-                endTime.setText(selectedHour + ":" + selectedMinute);
+                if (selectedMinute / 10 == 0) {
+                    endTime.setText(selectedHour + ":0" + selectedMinute + " AM");
+                } else {
+                    endTime.setText(selectedHour + ":" + selectedMinute + " AM");
+                }
             }
 
             chosenEndTime.set(Calendar.HOUR, selectedHour);
@@ -191,7 +210,7 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
             chosenEndTime.set(Calendar.SECOND, 0);
 
         }, mEndHour, mEndMinute, false);
-        mTimePicker.setTitle("End Time\n");
+        mTimePicker.setTitle("End Time");
         mTimePicker.show();
         firstTimeFlag = false;
     }
@@ -212,7 +231,7 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
     }
 
     public boolean checkIfEndLessThanStart() {
-        return false;
+        return chosenStartTime.getTimeInMillis() <= chosenEndTime.getTimeInMillis();
     }
 
     public void checkCollection() {
