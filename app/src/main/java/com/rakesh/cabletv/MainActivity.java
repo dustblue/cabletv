@@ -12,13 +12,17 @@ public class MainActivity extends AppCompatActivity {
     private final String items[] = {
             "Add User",
             "All Users",
-            "Clusters"
+            "Clusters",
+            "History",
+            "Collection"
     };
 
     private final int itemImages[] = {
             R.drawable.ic_add_user,
             R.drawable.ic_all_users,
             R.drawable.ic_clusters,
+            R.drawable.ic_history,
+            R.drawable.ic_collection
     };
 
     @Override
@@ -42,11 +46,18 @@ public class MainActivity extends AppCompatActivity {
                                     startActivity(new Intent(MainActivity.this, EditActivity.class));
                                     break;
                                 case 1:
-                                    startActivity(new Intent(MainActivity.this, ListActivity.class));
+                                    Intent i = new Intent(MainActivity.this, ListActivity.class);
+                                    i.putExtra("cluster", "All");
+                                    startActivity(i);
                                     break;
                                 case 2:
-                                    Intent i = new Intent(MainActivity.this, ClusterActivity.class);
-                                    startActivity(i);
+                                    startActivity(new Intent(MainActivity.this, ClusterActivity.class));
+                                    break;
+                                case 3:
+                                    startActivity(new Intent(MainActivity.this, HistoryActivity.class));
+                                    break;
+                                case 4:
+                                    startActivity(new Intent(MainActivity.this, CollectionActivity.class));
                                     break;
                                 default:
                                     break;

@@ -66,6 +66,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/active"
         android:textSize="18sp"
+        android:checkMark="@drawable/ic_check_single_green"
         app:layout_constraintStart_toEndOf="@+id/caf_text"
         app:layout_constraintTop_toTopOf="@+id/caf_text" />
 

@@ -1,10 +1,11 @@
 package com.rakesh.cabletv;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -13,12 +14,14 @@ public class TransactionActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     List<Transaction> transactionsList;
     DBHandler db;
+    TextView emptyText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction);
 
+        emptyText = findViewById(R.id.trans_empty_text);
         recyclerView = findViewById(R.id.transactions_list);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
@@ -30,8 +33,12 @@ public class TransactionActivity extends AppCompatActivity {
         String username = getIntent().getStringExtra("username");
 
         transactionsList = db.getTransactionsByUser(vc);
-        TransactionsAdapter adapter = new TransactionsAdapter(transactionsList, username);
-        recyclerView.setAdapter(adapter);
+        if (transactionsList != null) {
+            TransactionsAdapter adapter = new TransactionsAdapter(transactionsList, username);
+            recyclerView.setAdapter(adapter);
+        } else {
+            emptyText.setText(R.string.no_transactions);
+        }
 
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(this,

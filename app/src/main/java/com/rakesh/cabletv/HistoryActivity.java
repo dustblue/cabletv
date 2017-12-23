@@ -1,10 +1,11 @@
 package com.rakesh.cabletv;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -13,12 +14,14 @@ public class HistoryActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     List<Entry> entries;
     DBHandler db;
+    TextView emptyText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
+        emptyText = findViewById(R.id.history_empty_text);
         recyclerView = findViewById(R.id.history_list);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
@@ -28,8 +31,12 @@ public class HistoryActivity extends AppCompatActivity {
         db = new DBHandler(this);
 
         entries = db.getLog();
-        HistoryAdapter adapter = new HistoryAdapter(entries);
-        recyclerView.setAdapter(adapter);
+        if (entries != null) {
+            HistoryAdapter adapter = new HistoryAdapter(entries);
+            recyclerView.setAdapter(adapter);
+        } else {
+            emptyText.setText(R.string.empty_history);
+        }
 
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(this,

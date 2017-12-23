@@ -18,7 +18,7 @@ import java.util.List;
 
 public class UnpaidTab extends Fragment {
 
-    TextView emptyText, listTitle;
+    TextView emptyText;
     RecyclerView recyclerView;
     private ListAdapter mAdapter;
     List<User> userList;
@@ -30,20 +30,18 @@ public class UnpaidTab extends Fragment {
         View v = inflater.inflate(R.layout.tab_unpaid, container, false);
 
         emptyText = (TextView) v.findViewById(R.id.unpaid_empty_text);
-        listTitle = (TextView) v.findViewById(R.id.unpaid_list_title);
         recyclerView = (RecyclerView) v.findViewById(R.id.unpaid_list);
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            cluster = bundle.getString("cluster", "none");
+            cluster = bundle.getString("cluster", "All");
         }
 
         db = new DBHandler(getContext());
 
-        if (cluster.equals("none")) {
+        if (cluster.equals("All")) {
             userList = db.getAllUsers(false);
         } else {
-            listTitle.setText(cluster);
             userList = db.getUsersByCluster(cluster, false);
         }
 

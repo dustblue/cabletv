@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/user_activity"
-    tools:context="com.rakesh.cabletv.UserActivity">
+    android:id="@+id/collection"
+    tools:context="com.rakesh.cabletv.CollectionActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/toolbar2"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -21,34 +21,15 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_user" />
+    <include layout="@layout/content_collection" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|end"
-        android:layout_margin="@dimen/padding"
-        app:fabSize="normal"
-        app:srcCompat="@drawable/ic_edit" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/transactions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|end"
-        android:layout_marginTop="@dimen/big_padding"
-        android:layout_marginEnd="@dimen/padding"
-        app:fabSize="normal"
-        app:srcCompat="@drawable/ic_transaction" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/ok"
+        android:id="@+id/fab_check"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/padding"
         app:fabSize="normal"
-        app:srcCompat="@drawable/ic_check" />
+        android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@drawable/ic_collect" />
 
 </android.support.design.widget.CoordinatorLayout>
