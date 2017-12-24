@@ -34,12 +34,12 @@ public class UnpaidTab extends Fragment {
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            cluster = bundle.getString("cluster", "All");
+            cluster = bundle.getString("cluster", "All Users");
         }
 
         db = new DBHandler(getContext());
 
-        if (cluster.equals("All")) {
+        if (cluster.equals("All Users")) {
             userList = db.getAllUsers(false);
         } else {
             userList = db.getUsersByCluster(cluster, false);

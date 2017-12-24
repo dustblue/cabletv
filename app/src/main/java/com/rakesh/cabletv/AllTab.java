@@ -35,12 +35,12 @@ public class AllTab extends Fragment {
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            cluster = bundle.getString("cluster", "All");
+            cluster = bundle.getString("cluster", "All Users");
         }
 
         db = new DBHandler(getContext());
 
-        if (cluster.equals("All")) {
+        if (cluster.equals("All Users")) {
             userList = db.getAllUsers(true);
         } else {
             userList = db.getUsersByCluster(cluster, true);

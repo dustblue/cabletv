@@ -29,4 +29,7 @@
     <string name="end_date">End Date</string>
     <string name="start_time">Start Time:</string>
     <string name="end_time">End Time:</string>
+    <string name="shortcut_disabled_message">Shortcut is disabled</string>
+    <string name="add_user_shortcut_label">Add User</string>
+    <string name="clusters_shortcut_label">Clusters</string>
 </resources>

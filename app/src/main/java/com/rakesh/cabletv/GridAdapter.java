@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
+
 public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
 
     private String[] items;
@@ -31,11 +34,28 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(GridAdapter.ViewHolder holder, int position) {
         holder.itemTitle.setText(items[position]);
-        if (itemImages != null)
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+        if (itemImages != null) {
             holder.itemImage.setImageResource(itemImages[position]);
-        else
-            holder.itemImage.setImageResource(R.drawable.ic_launcher_foreground);
+            holder.itemImage.setColorFilter(generator.getRandomColor());
+        }
+        else {
+            String [] tiles = items[position].split(" ");
+            StringBuilder t = new StringBuilder();
+            for (String tile: tiles) {
+                t.append(tile.charAt(0));
+            }
+            TextDrawable drawable = TextDrawable.builder()
+                    .beginConfig()
+                    .bold()
+                    .toUpperCase()
+                    .width(180)
+                    .height(180)
+                    .endConfig()
+                    .buildRound(t.toString(), generator.getRandomColor());
 
+            holder.itemImage.setImageDrawable(drawable);
+        }
     }
 
     @Override

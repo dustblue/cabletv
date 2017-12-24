@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--<shortcut-->
+        <!--android:enabled="true"-->
+        <!--android:icon="@drawable/ic_add_user_shortcut"-->
+        <!--android:shortcutDisabledMessage="@string/shortcut_disabled_message"-->
+        <!--android:shortcutId="Add Users"-->
+        <!--android:shortcutLongLabel="@string/add_user_shortcut_label"-->
+        <!--android:shortcutShortLabel="@string/add_user_shortcut_label">-->
+
+        <!--<intent-->
+            <!--android:action="android.intent.action.VIEW"-->
+            <!--android:targetClass="com.rakesh.cabletv.EditActivity"-->
+            <!--android:targetPackage="com.rakesh.cabletv" />-->
+    <!--</shortcut>-->
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_clusters_shortcut"
+        android:shortcutDisabledMessage="@string/shortcut_disabled_message"
+        android:shortcutId="Add Users"
+        android:shortcutLongLabel="@string/clusters_shortcut_label"
+        android:shortcutShortLabel="@string/clusters_shortcut_label">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.rakesh.cabletv.ClusterActivity"
+            android:targetPackage="com.rakesh.cabletv" />
+    </shortcut>
+
+</shortcuts>

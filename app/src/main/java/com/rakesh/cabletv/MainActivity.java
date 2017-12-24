@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                                     break;
                                 case 1:
                                     Intent i = new Intent(MainActivity.this, ListActivity.class);
-                                    i.putExtra("cluster", "All");
+                                    i.putExtra("cluster", "All Users");
                                     startActivity(i);
                                     break;
                                 case 2:

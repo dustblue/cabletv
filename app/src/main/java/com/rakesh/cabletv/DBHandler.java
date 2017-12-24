@@ -62,7 +62,7 @@ public class DBHandler extends SQLiteOpenHelper {
                 + "(" + KEY_VC + ")" + ")";
 
         String CREATE_LOG_TABLE = "CREATE TABLE IF NOT EXISTS " + LOG_TABLE + "("
-                + KEY_LOGDATE + " DATETIME DEFAULT CURRENT_TIMESTAMP PRIMARY KEY, " + KEY_ID + " INTEGER, "
+                + KEY_LOGDATE + " DATETIME DEFAULT (datetime('now','localtime')) PRIMARY KEY, " + KEY_ID + " INTEGER, "
                 + "FOREIGN KEY (" + KEY_ID + ") REFERENCES "
                 + TRANSACTIONS_TABLE + "(" + KEY_ID + ")" + ")";
 
@@ -205,27 +205,29 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public String[] getClusters() {
-        String[] clusters = new String[5];
-        //TODO Trim String Array.
-        int i = 0;
+        List<String> clusters = new ArrayList<>();
+        String temp = null;
         String select = "SELECT DISTINCT " + KEY_CLUSTER + " FROM " + USERS_TABLE;
 
         try (SQLiteDatabase db = this.getReadableDatabase()) {
             try (Cursor cursor = db.rawQuery(select, null)) {
                 if (cursor.moveToFirst()) {
-                    List valid = Arrays.asList(clusters);
                     do {
-                        String temp = cursor.getString(0);
-                        if (!valid.contains(temp.toLowerCase()) && !temp.equals("")) {
-                            clusters[i] = temp;
-                            i++;
+                        temp = cursor.getString(0);
+                        if (!clusters.contains(temp.toLowerCase()) && !temp.equals("")) {
+                            clusters.add(temp);
                         }
                     } while (cursor.moveToNext());
                 }
             }
         }
-
-        return clusters;
+        if (temp != null) {
+            String[] cls = new String[clusters.size()];
+            clusters.toArray(cls);
+            return cls;
+        } else {
+            return null;
+        }
     }
 
     public void addTransaction(Transaction t) {

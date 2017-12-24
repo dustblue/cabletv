@@ -86,7 +86,7 @@ public class UserActivity extends AppCompatActivity {
             intent.setData(Uri.parse(uri));
             if (ActivityCompat.checkSelfPermission(getApplicationContext(),
                     Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                //TODO Handle Request Permission
+                //TODO Handle No Permission
                 return;
             }
             startActivity(intent);
