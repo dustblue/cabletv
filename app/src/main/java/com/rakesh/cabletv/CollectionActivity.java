@@ -12,6 +12,7 @@ import android.text.InputType;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.util.Calendar;
 
@@ -19,6 +20,7 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
 
     View parent;
     EditText startTime, endTime, startDate, endDate;
+    TextView total, totalText;
     Calendar chosenStartTime, chosenEndTime;
     DBHandler db;
     boolean firstTimeFlag;
@@ -53,6 +55,8 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
         endTime = (EditText) findViewById(R.id.end_time);
         startDate = (EditText) findViewById(R.id.start_date);
         endDate = (EditText) findViewById(R.id.end_date);
+        total = (TextView) findViewById(R.id.total);
+        totalText = (TextView) findViewById(R.id.total_amount);
 
         startTime.setInputType(InputType.TYPE_NULL);
         endTime.setInputType(InputType.TYPE_NULL);
@@ -237,6 +241,9 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
     public void checkCollection() {
         db = new DBHandler(this);
         //TODO Get collection
+        totalText.setVisibility(View.VISIBLE);
+        total.setVisibility(View.VISIBLE);
+        total.setText("1500");
     }
 
 }

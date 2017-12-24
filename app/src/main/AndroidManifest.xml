@@ -26,8 +26,12 @@
             android:label="@string/title_activity_edit"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".TransactionActivity" />
-        <activity android:name=".HistoryActivity" />
+        <activity
+            android:name=".TransactionActivity"
+            android:label="@string/transactions" />
+        <activity
+            android:name=".HistoryActivity"
+            android:label="@string/title_history_activity" />
         <activity
             android:name=".SplashActivity"
             android:theme="@style/SplashTheme">
@@ -38,9 +42,9 @@
             </intent-filter>
             <meta-data
                 android:name="android.app.shortcuts"
-                android:resource="@xml/shortcuts"/>
+                android:resource="@xml/shortcuts" />
         </activity>
-       <activity
+        <activity
             android:name=".CollectionActivity"
             android:label="@string/title_activity_collection"
             android:theme="@style/AppTheme.NoActionBar" />

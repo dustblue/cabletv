@@ -1,29 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
-    <!--<shortcut-->
-        <!--android:enabled="true"-->
-        <!--android:icon="@drawable/ic_add_user_shortcut"-->
-        <!--android:shortcutDisabledMessage="@string/shortcut_disabled_message"-->
-        <!--android:shortcutId="Add Users"-->
-        <!--android:shortcutLongLabel="@string/add_user_shortcut_label"-->
-        <!--android:shortcutShortLabel="@string/add_user_shortcut_label">-->
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_add_user_shortcut"
+        android:shortcutDisabledMessage="@string/shortcut_disabled_message"
+        android:shortcutId="Add Users"
+        android:shortcutLongLabel="@string/add_user_shortcut_label"
+        android:shortcutShortLabel="@string/add_user_shortcut_label">
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetClass="com.rakesh.cabletv.MainActivity"
+            android:targetPackage="com.rakesh.cabletv" />
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.rakesh.cabletv.EditActivity"
+            android:targetPackage="com.rakesh.cabletv" />
+    </shortcut>
 
-        <!--<intent-->
-            <!--android:action="android.intent.action.VIEW"-->
-            <!--android:targetClass="com.rakesh.cabletv.EditActivity"-->
-            <!--android:targetPackage="com.rakesh.cabletv" />-->
-    <!--</shortcut>-->
     <shortcut
         android:enabled="true"
         android:icon="@drawable/ic_clusters_shortcut"
         android:shortcutDisabledMessage="@string/shortcut_disabled_message"
-        android:shortcutId="Add Users"
+        android:shortcutId="Clusters"
         android:shortcutLongLabel="@string/clusters_shortcut_label"
         android:shortcutShortLabel="@string/clusters_shortcut_label">
-
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetClass="com.rakesh.cabletv.MainActivity"
+            android:targetPackage="com.rakesh.cabletv" />
         <intent
             android:action="android.intent.action.VIEW"
             android:targetClass="com.rakesh.cabletv.ClusterActivity"
+            android:targetPackage="com.rakesh.cabletv" />
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_collection_shortcut"
+        android:shortcutDisabledMessage="@string/shortcut_disabled_message"
+        android:shortcutId="Collection"
+        android:shortcutLongLabel="@string/collection_shortcut_label"
+        android:shortcutShortLabel="@string/collection_shortcut_label">
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetClass="com.rakesh.cabletv.MainActivity"
+            android:targetPackage="com.rakesh.cabletv" />
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.rakesh.cabletv.CollectionActivity"
             android:targetPackage="com.rakesh.cabletv" />
     </shortcut>
 

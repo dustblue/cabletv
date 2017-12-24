@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.List;
@@ -37,14 +38,13 @@ public class TransactionActivity extends AppCompatActivity {
             TransactionsAdapter adapter = new TransactionsAdapter(transactionsList, username);
             recyclerView.setAdapter(adapter);
         } else {
-            //FIXME Does it look like its gonna work? ->_->
-            emptyText.setText(getString(R.string.no_transactions));
+            emptyText.setVisibility(View.VISIBLE);
         }
 
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(this,
                         (view, position) -> {
-//                            TODO Add Edit Delete Transaction
+                            //TODO Add Edit Delete Transaction
 //                            Intent i = new Intent(getContext(), UserActivity.class);
 //                            i.putExtra("vc", entries.get(position).getVc());
 //                            startActivityForResult(i, 10);
