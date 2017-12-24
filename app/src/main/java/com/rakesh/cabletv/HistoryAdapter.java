@@ -45,7 +45,7 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyViewHolder> {
         Entry entry = entries.get(position);
         holder.name.setText(entry.getUserName());
         holder.date.setText(entry.getTransaction().getDateTime());
-        holder.amount.setText(entry.getTransaction().getAmount());
+        holder.amount.setText(String.valueOf(entry.getTransaction().getAmount()));
     }
 
     @Override

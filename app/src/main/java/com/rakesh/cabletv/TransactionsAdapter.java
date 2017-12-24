@@ -47,7 +47,7 @@ class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapter.MyVie
         Transaction transaction = mTransactions.get(position);
         holder.name.setText(mUsername);
         holder.date.setText(transaction.getDateTime());
-        holder.amount.setText(transaction.getAmount());
+        holder.amount.setText(String.valueOf(transaction.getAmount()));
     }
 
     @Override

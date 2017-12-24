@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
 import android.widget.CheckedTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -33,7 +34,7 @@ public class UserActivity extends AppCompatActivity {
     public static final int EDIT_REQUEST_CODE = 21;
     DBHandler db;
     FloatingActionButton fabOk, fabEdit, fabTrans;
-    CheckedTextView active;
+    CheckBox active;
     TextView nameText, phoneText, addressText, cafText, vcText, installDateText;
     EditText amountField, dateField;
     int year, month, day;
@@ -57,7 +58,7 @@ public class UserActivity extends AppCompatActivity {
         cafText = (TextView) findViewById(R.id.caf_text);
         vcText = (TextView) findViewById(R.id.vc_text);
         installDateText = (TextView) findViewById(R.id.install_date);
-        active = (CheckedTextView) findViewById(R.id.active_box);
+        active = (CheckBox) findViewById(R.id.active_box);
 
         fabOk = (FloatingActionButton) findViewById(R.id.ok);
         fabEdit = (FloatingActionButton) findViewById(R.id.edit);
@@ -117,39 +118,33 @@ public class UserActivity extends AppCompatActivity {
 
         fabEdit.setOnClickListener(view -> {
             Intent i = new Intent(UserActivity.this, EditActivity.class);
-            i.putExtra("vc", vcText.getText());
+            i.putExtra("vc", vcText.getText().toString().split(" ")[1]);
             startActivityForResult(i, EDIT_REQUEST_CODE);
         });
 
         fabTrans.setOnClickListener(view -> {
             Intent i = new Intent(UserActivity.this, TransactionActivity.class);
-            i.putExtra("vc", vcText.getText());
+            i.putExtra("vc", vcText.getText().toString().split(" ")[1]);
             i.putExtra("username", nameText.getText());
             startActivity(i);
         });
     }
 
     public void setValues() {
-        /*
-        Dummy Data
-        User user = new User();
-        user.setName("Nithya");
-        user.setPhone("9655768683");
-        user.setAddress("73, Patel Street, Veeriampalayam");
-        user.setCaf("CAF: ABCDEFG");
-        user.setVc("VC: 12345R6");
-        user.setInstallDate("Installed On: 01/12/17");
-        */
-
         User user = db.getUser(vc);
+        String foo = "CAF: " + user.getCaf();
+        String bar = "VC: " + user.getVc();
+        String far = "Installed On: " + user.getInstallDate();
         nameText.setText(user.getName());
         phoneText.setText(user.getPhone());
         addressText.setText(user.getAddress());
-        cafText.setText(user.getCaf());
-        vcText.setText(user.getVc());
-        installDateText.setText(user.getInstallDate());
+        cafText.setText(foo);
+        vcText.setText(bar);
+        installDateText.setText(far);
         if(user.getStatus())
             active.setChecked(true);
+        else
+            active.setChecked(false);
     }
 
     public void showDatePicker() {
@@ -190,7 +185,7 @@ public class UserActivity extends AppCompatActivity {
         }
 
         protected Void doInBackground(Void... args) {
-            db.addTransaction(new Transaction(vc, amountText, dateText));
+            db.addTransaction(new Transaction(vc, Integer.parseInt(amountText), dateText));
             return null;
         }
 

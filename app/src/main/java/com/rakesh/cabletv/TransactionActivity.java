@@ -37,7 +37,8 @@ public class TransactionActivity extends AppCompatActivity {
             TransactionsAdapter adapter = new TransactionsAdapter(transactionsList, username);
             recyclerView.setAdapter(adapter);
         } else {
-            emptyText.setText(R.string.no_transactions);
+            //FIXME Does it look like its gonna work? ->_->
+            emptyText.setText(getString(R.string.no_transactions));
         }
 
         recyclerView.addOnItemTouchListener(

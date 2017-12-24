@@ -7,13 +7,13 @@ package com.rakesh.cabletv;
 class Transaction {
 
     private String vc;
-    private String amount;
+    private int amount;
     private String dateTime;
 
     Transaction() {
     }
 
-    Transaction(String vc, String amount, String dateTime) {
+    Transaction(String vc, int amount, String dateTime) {
         this.vc = vc;
         this.amount = amount;
         this.dateTime = dateTime;
@@ -27,11 +27,11 @@ class Transaction {
         this.vc = vc;
     }
 
-    String getAmount() {
+    int getAmount() {
         return amount;
     }
 
-    void setAmount(String amount) {
+    void setAmount(int amount) {
         this.amount = amount;
     }
 

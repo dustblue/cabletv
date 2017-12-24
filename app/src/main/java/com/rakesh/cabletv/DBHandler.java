@@ -9,9 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 public class DBHandler extends SQLiteOpenHelper {
 
@@ -239,17 +237,17 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_DATE, t.getDateTime());
 
         db.insert(TRANSACTIONS_TABLE, null, values);
-        Cursor cursor = db.rawQuery("SELECT " + KEY_ID + " FROM " + TRANSACTIONS_TABLE
-                + " WHERE " + KEY_VC + " = " + "\"" + t.getVc() + "\"", null);
+
+        Cursor cursor = db.rawQuery("SELECT LAST_INSERT_ROWID() FROM " + TRANSACTIONS_TABLE, null);
         cursor.moveToFirst();
-        int i = Integer.parseInt(cursor.getString(0));
+        int i = (cursor.getInt(0));
         updateLog(i);
 
         cursor.close();
         db.close();
     }
 
-    public void updateTransaction(Transaction t) {
+    public void deleteTransaction(Transaction t) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -271,10 +269,8 @@ public class DBHandler extends SQLiteOpenHelper {
                 Transaction transaction = new Transaction();
 
                 transaction.setVc(cursor.getString(1));
-                transaction.setAmount(cursor.getString(2));
+                transaction.setAmount(cursor.getInt(2));
                 transaction.setDateTime(cursor.getString(3));
-
-                //debug
 
                 for (int i = 0; i < 4; i++)
                     Log.e(TAG, cursor.getString(i));
@@ -300,7 +296,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public List<Entry> getLog() {
         SQLiteDatabase db = this.getWritableDatabase();
         List<Entry> entries = new ArrayList<>();
-        String s = "";
+        String s;
 
         Cursor cursor = db.rawQuery("SELECT * FROM " + LOG_TABLE
                 + " ORDER BY " + KEY_LOGDATE + " DESC", null);
@@ -309,30 +305,33 @@ public class DBHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 s = cursor.getString(0);
-                int i = Integer.parseInt(cursor.getString(1));
+                int i = cursor.getInt(1);
 
                 c1 = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE
-                        + " WHERE " + KEY_ID + " is " + i, null);
+                        + " WHERE " + KEY_ID + " = " + i, null);
                 c1.moveToFirst();
 
-                Transaction transaction = new Transaction();
-                transaction.setVc(c1.getString(1));
-                transaction.setAmount(c1.getString(2));
-                transaction.setDateTime(s);
+                if (c1.getString(1) != null) {
 
-                c2 = db.rawQuery("SELECT " + KEY_NAME + " FROM " + USERS_TABLE + ", "
-                        + TRANSACTIONS_TABLE + " WHERE " + TRANSACTIONS_TABLE + "." + KEY_VC
-                        + " = " + USERS_TABLE + "." + KEY_VC
-                        + " AND " + KEY_ID + " is " + i, null);
-                c2.moveToFirst();
+                    Transaction transaction = new Transaction();
+                    transaction.setVc(c1.getString(1));
+                    transaction.setAmount(c1.getInt(2));
+                    transaction.setDateTime(s);
 
-                Entry entry = new Entry();
-                entry.setTransaction(transaction);
-                entry.setUserName(c2.getString(0));
-                entries.add(entry);
+                    c2 = db.rawQuery("SELECT " + KEY_NAME + " FROM " + USERS_TABLE + ", "
+                            + TRANSACTIONS_TABLE + " WHERE " + TRANSACTIONS_TABLE + "." + KEY_VC
+                            + " = " + USERS_TABLE + "." + KEY_VC
+                            + " AND " + KEY_ID + " is " + i, null);
+                    c2.moveToFirst();
 
+                    Entry entry = new Entry();
+                    entry.setTransaction(transaction);
+                    entry.setUserName(c2.getString(0));
+                    entries.add(entry);
+
+                    c2.close();
+                }
                 c1.close();
-                c2.close();
 
             } while (cursor.moveToNext());
         }
