@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rakesh.cabletv.MainActivity">
+    tools:context="com.rakesh.cabletv.MainActivity"
+    android:layout_marginTop="@dimen/fab_margin">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/main_view"

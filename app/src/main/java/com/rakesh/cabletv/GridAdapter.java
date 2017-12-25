@@ -49,8 +49,8 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                     .beginConfig()
                     .bold()
                     .toUpperCase()
-                    .width(180)
-                    .height(180)
+                    .width(240)
+                    .height(240)
                     .endConfig()
                     .buildRound(t.toString(), generator.getRandomColor());
 

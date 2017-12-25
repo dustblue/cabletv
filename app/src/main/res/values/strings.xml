@@ -38,4 +38,13 @@
     <string name="no_clusters">Uh Oh! No Clusters!</string>
     <string name="no_history">No History!</string>
     <string name="total_amount">Total Amount</string>
+    <string name="file_path">Current Save Path:</string>
+    <string name="change_path">Change Path</string>
+    <string name="backup_now">Backup Now</string>
+    <string name="last_backup">Last Backup Time:</string>
+    <string name="last_users_restore">Last Users Restore:</string>
+    <string name="last_trans_restore">Last Trans. Restore:</string>
+    <string name="add_users">Add Users</string>
+    <string name="add_trans">Add Transactions</string>
+    <string name="title_activity_backup_restore">Backup And Restore</string>
 </resources>

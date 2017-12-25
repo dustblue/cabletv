@@ -14,7 +14,8 @@ public class MainActivity extends AppCompatActivity {
             "All Users",
             "Clusters",
             "History",
-            "Collection"
+            "Collection",
+            "Backup/Restore"
     };
 
     private final int itemImages[] = {
@@ -22,7 +23,8 @@ public class MainActivity extends AppCompatActivity {
             R.drawable.ic_all_users,
             R.drawable.ic_clusters,
             R.drawable.ic_history,
-            R.drawable.ic_collection
+            R.drawable.ic_collection,
+            R.drawable.ic_backup
     };
 
     @Override
@@ -32,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.main_view);
         recyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 2);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 3);
         recyclerView.setLayoutManager(layoutManager);
 
         GridAdapter adapter = new GridAdapter(items, itemImages);
@@ -58,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
                                     break;
                                 case 4:
                                     startActivity(new Intent(MainActivity.this, CollectionActivity.class));
+                                    break;
+                                case 5:
+                                    startActivity(new Intent(MainActivity.this, BackupRestoreActivity.class));
                                     break;
                                 default:
                                     break;
