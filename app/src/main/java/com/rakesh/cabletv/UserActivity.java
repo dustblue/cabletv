@@ -52,7 +52,6 @@ public class UserActivity extends AppCompatActivity {
 
         vc = getIntent().getStringExtra("vc");
 
-        //TODO Make Scrollable
         nameText = (TextView) findViewById(R.id.name_text);
         phoneText = (TextView) findViewById(R.id.phone_text);
         addressText = (TextView) findViewById(R.id.address_text);

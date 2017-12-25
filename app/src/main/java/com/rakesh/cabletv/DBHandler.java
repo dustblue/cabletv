@@ -340,4 +340,73 @@ public class DBHandler extends SQLiteOpenHelper {
 
         return entries;
     }
+
+    public List<String[]> backupUsers() {
+        List<String[]> usersList = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try (Cursor cursor = db.rawQuery("SELECT * FROM " + USERS_TABLE, null)) {
+            if (cursor.moveToFirst()) {
+                do {
+                    String[] user = new String[]{
+                            cursor.getString(0),
+                            cursor.getString(1),
+                            cursor.getString(2),
+                            cursor.getString(3),
+                            cursor.getString(4),
+                            cursor.getString(6),
+                            cursor.getString(7)
+                    };
+                    usersList.add(user);
+                } while (cursor.moveToNext());
+            }
+        }
+
+        db.close();
+        return usersList;
+    }
+
+    public List<String[]> backupTransactions() {
+        List<String[]> transList = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try (Cursor cursor = db.rawQuery("SELECT * FROM " + LOG_TABLE
+                + " ORDER BY " + KEY_LOGDATE + " DESC", null)) {
+            Cursor c1, c2;
+
+            if (cursor.moveToFirst()) {
+                do {
+                    int i = cursor.getInt(1);
+
+                    c1 = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE
+                            + " WHERE " + KEY_ID + " = " + i, null);
+                    c1.moveToFirst();
+
+                    if (c1.getString(1) != null) {
+
+                        c2 = db.rawQuery("SELECT " + KEY_NAME + " FROM " + USERS_TABLE + ", "
+                                + TRANSACTIONS_TABLE + " WHERE " + TRANSACTIONS_TABLE + "." + KEY_VC
+                                + " = " + USERS_TABLE + "." + KEY_VC
+                                + " AND " + KEY_ID + " is " + i, null);
+                        c2.moveToFirst();
+
+                        String[] user = new String[]{
+                                c1.getString(1),
+                                c2.getString(0),
+                                c1.getString(2),
+                                c1.getString(3)
+                        };
+                        transList.add(user);
+
+                        c2.close();
+                    }
+                    c1.close();
+
+                } while (cursor.moveToNext());
+            }
+        }
+
+        db.close();
+        return transList;
+    }
 }

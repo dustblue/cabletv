@@ -45,7 +45,6 @@ public class EditActivity extends AppCompatActivity {
         parent = findViewById(R.id.edit_act);
         db = new DBHandler(this);
 
-        //TODO Make Scrollable
         nameField = (EditText) findViewById(R.id.name_edit);
         phoneField = (EditText) findViewById(R.id.phone_edit);
         addressField = (EditText) findViewById(R.id.address_edit);

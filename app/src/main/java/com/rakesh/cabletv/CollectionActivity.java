@@ -35,7 +35,6 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
         setSupportActionBar(toolbar);
         firstTimeFlag = true;
 
-        //TODO Make Scrollable
         Calendar now = Calendar.getInstance();
         mStartMinute = now.get(Calendar.MINUTE);
         mEndMinute = now.get(Calendar.MINUTE);

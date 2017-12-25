@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -41,6 +42,7 @@ public class BackupRestoreActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_backup_restore);
 
+        db = new DBHandler(this);
         parent = findViewById(R.id.backup_restore_parent);
         filePath = (TextView) findViewById(R.id.file_path);
         lastBackup = (TextView) findViewById(R.id.last_backup);
@@ -52,7 +54,7 @@ public class BackupRestoreActivity extends AppCompatActivity {
         addTransactions = (Button) findViewById(R.id.button_trans_restore);
 
         preferences = getApplicationContext().getSharedPreferences("cabletv", 0);
-        rootDir = getFilesDir().getAbsolutePath();
+        rootDir = Environment.getExternalStorageDirectory().toString();
         Log.e(TAG, rootDir);
 
         filePath.setText(preferences.getString("filepath", rootDir));
@@ -105,7 +107,7 @@ public class BackupRestoreActivity extends AppCompatActivity {
 
     public String getTimeInstance() {
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy hh-mm-ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy_hh-mm-ss");
         return sdf.format(cal.getTime());
     }
 
@@ -114,7 +116,7 @@ public class BackupRestoreActivity extends AppCompatActivity {
         try (CSVWriter writer = new CSVWriter(new FileWriter(storagePath
                 + "/Users_Backup_" + getTimeInstance() + ".csv"))) {
             List<String[]> database = new ArrayList<>();
-            //TODO Get from dB
+            database.addAll(db.backupUsers());
             writer.writeAll(database);
         } catch (IOException e) {
             e.printStackTrace();
@@ -126,7 +128,7 @@ public class BackupRestoreActivity extends AppCompatActivity {
         try (CSVWriter writer = new CSVWriter(new FileWriter(storagePath
                 + "/Transactions_Backup_" + getTimeInstance() + ".csv"))) {
             List<String[]> database = new ArrayList<>();
-            //TODO Get from dB
+            database.addAll(db.backupTransactions());
             writer.writeAll(database);
         } catch (IOException e) {
             e.printStackTrace();
@@ -137,7 +139,7 @@ public class BackupRestoreActivity extends AppCompatActivity {
         private ProgressDialog dialog;
         private String mPath;
 
-        backup(BackupRestoreActivity activity, String path) {
+        public backup(BackupRestoreActivity activity, String path) {
             dialog = new ProgressDialog(activity);
             mPath = path;
         }
@@ -146,7 +148,7 @@ public class BackupRestoreActivity extends AppCompatActivity {
         protected void onPreExecute() {
             dialog.setMessage("Backing up...");
             dialog.setCancelable(false);
-            dialog.show();
+            //dialog.show();
         }
 
         protected Void doInBackground(Void... args) {
@@ -193,7 +195,7 @@ public class BackupRestoreActivity extends AppCompatActivity {
         private ProgressDialog dialog;
         private String mPath;
 
-        addUsers(BackupRestoreActivity activity, String path) {
+        public addUsers(BackupRestoreActivity activity, String path) {
             dialog = new ProgressDialog(activity);
             mPath = path;
         }
@@ -247,7 +249,7 @@ public class BackupRestoreActivity extends AppCompatActivity {
         private ProgressDialog dialog;
         private String mPath;
 
-        addTransactions(BackupRestoreActivity activity, String path) {
+        public addTransactions(BackupRestoreActivity activity, String path) {
             dialog = new ProgressDialog(activity);
             mPath = path;
         }

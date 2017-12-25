@@ -20,10 +20,12 @@
         <activity
             android:name=".UserActivity"
             android:label="@string/title_activity_user"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".EditActivity"
             android:label="@string/title_activity_edit"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".MainActivity" />
         <activity
@@ -48,6 +50,7 @@
         <activity
             android:name=".CollectionActivity"
             android:label="@string/title_activity_collection"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".BackupRestoreActivity"
