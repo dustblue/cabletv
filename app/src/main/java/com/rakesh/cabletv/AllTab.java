@@ -21,7 +21,7 @@ public class AllTab extends Fragment {
     TextView emptyText;
     RecyclerView recyclerView;
     private ListAdapter mAdapter;
-    List<User> userList;
+    List<UserEntry> userList;
     DBHandler db;
     String cluster = "none";
 
@@ -41,9 +41,9 @@ public class AllTab extends Fragment {
         db = new DBHandler(getContext());
 
         if (cluster.equals("All Users")) {
-            userList = db.getAllUsers(true);
+            userList = db.getAllUsers();
         } else {
-            userList = db.getUsersByCluster(cluster, true);
+            userList = db.getUsersByCluster(cluster);
         }
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
@@ -61,7 +61,7 @@ public class AllTab extends Fragment {
                 new RecyclerItemClickListener(getContext(),
                         (view, position) -> {
                             Intent i = new Intent(getContext(), UserActivity.class);
-                            i.putExtra("vc", userList.get(position).getVc());
+                            i.putExtra("vc", userList.get(position).getUser().getVc());
                             startActivityForResult(i, 10);
                         })
         );

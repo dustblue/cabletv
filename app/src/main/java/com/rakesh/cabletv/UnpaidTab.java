@@ -21,7 +21,7 @@ public class UnpaidTab extends Fragment {
     TextView emptyText;
     RecyclerView recyclerView;
     private ListAdapter mAdapter;
-    List<User> userList;
+    List<UserEntry> userList;
     DBHandler db;
     String cluster;
 
@@ -40,9 +40,9 @@ public class UnpaidTab extends Fragment {
         db = new DBHandler(getContext());
 
         if (cluster.equals("All Users")) {
-            userList = db.getAllUsers(false);
+            userList = db.getAllUsers();
         } else {
-            userList = db.getUsersByCluster(cluster, false);
+            userList = db.getUsersByCluster(cluster);
         }
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
@@ -60,7 +60,7 @@ public class UnpaidTab extends Fragment {
                 new RecyclerItemClickListener(getContext(),
                         (view, position) -> {
                             Intent i = new Intent(getContext(), UserActivity.class);
-                            i.putExtra("vc", userList.get(position).getVc());
+                            i.putExtra("vc", userList.get(position).getUser().getVc());
                             startActivityForResult(i, 11);
                         })
         );

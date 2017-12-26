@@ -18,7 +18,7 @@ class User {
     User() {
     }
 
-    User(String name, String phone, String address, String cluster, String caf, String vc, String installDate, Boolean status) {
+    User(String vc, String caf, String name, String phone, String address, String cluster, String installDate, Boolean status) {
         this.vc = vc;
         this.caf = caf;
         this.name = name;

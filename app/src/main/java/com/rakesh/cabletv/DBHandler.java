@@ -8,8 +8,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class DBHandler extends SQLiteOpenHelper {
 
@@ -50,7 +55,7 @@ public class DBHandler extends SQLiteOpenHelper {
         String CREATE_EVENTS_TABLE = "CREATE TABLE IF NOT EXISTS " + USERS_TABLE + "("
                 + KEY_VC + " TEXT PRIMARY KEY," + KEY_CAF + " TEXT,"
                 + KEY_NAME + " TEXT," + KEY_PHONE + " TEXT,"
-                + KEY_ADDRESS + " TEXT," + KEY_CLUSTER + " TEXT,"
+                + KEY_ADDRESS + " TEXT," + KEY_CLUSTER + " TEXT COLLATE NOCASE,"
                 + KEY_INSTALL_DATE + " TEXT," + KEY_STATUS + " BOOLEAN" + ")";
 
         String CREATE_TRANS_TABLE = "CREATE TABLE IF NOT EXISTS " + TRANSACTIONS_TABLE + "("
@@ -112,6 +117,14 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
 
+    public void deleteUser(String vc) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.delete(USERS_TABLE, KEY_VC + " = ?", new String[]{vc});
+        db.close();
+
+    }
+
     public User getUser(String vc) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + USERS_TABLE + " WHERE "
@@ -136,67 +149,108 @@ public class DBHandler extends SQLiteOpenHelper {
         return user;
     }
 
-    public List<User> getAllUsers(Boolean all) {
-        List<User> usersList = new ArrayList<>();
+    public String getLastPaid(String vc) {
         SQLiteDatabase db = this.getWritableDatabase();
+        String selectQuery = "SELECT * FROM " + TRANSACTIONS_TABLE + " WHERE " +
+                KEY_VC + " = " + "\"" + vc + "\"" + " ORDER BY " + KEY_DATE + " DESC";
+        try (Cursor cursor = db.rawQuery(selectQuery, null)) {
+            cursor.moveToFirst();
+            return cursor.getString(3);
+        } catch (Exception e) {
+            return "Unavailable";
+        }
+    }
 
-        //TODO if all = false then get unpaid
-
-        Cursor cursor = db.rawQuery("SELECT * FROM " + USERS_TABLE, null);
-        if (cursor.moveToFirst()) {
-            do {
-                User user = new User();
-
-                user.setVc(cursor.getString(0));
-                user.setCaf(cursor.getString(1));
-                user.setName(cursor.getString(2));
-                user.setPhone(cursor.getString(3));
-                user.setAddress(cursor.getString(4));
-                user.setCluster(cursor.getString(5));
-                user.setInstallDate(cursor.getString(6));
-                user.setStatus((cursor.getInt(7) > 0));
-
-                //debug
-
-                for (int i = 0; i < 8; i++)
-                    Log.e(TAG, cursor.getString(i));
-                Log.e(TAG, "\n");
-
-                usersList.add(user);
-            } while (cursor.moveToNext());
+    public boolean checkIfPaid(String lastPaidDate) {
+        try {
+            Date date = new SimpleDateFormat("dd-mm-yyyy hh-mm-ss", Locale.getDefault())
+                    .parse(lastPaidDate);
+            Calendar lastPaid = Calendar.getInstance();
+            lastPaid.setTime(date);
+            Calendar now = Calendar.getInstance();
+            if (lastPaid.get(Calendar.MONTH) >= now.get(Calendar.MONTH))
+                return true;
+        } catch (ParseException e) {
+            Log.e(TAG, "Parse Date Error" + e.getMessage());
+            e.printStackTrace();
         }
 
-        cursor.close();
+        return false;
+    }
+
+    public List<UserEntry> getAllUsers() {
+        List<UserEntry> usersList = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String select = "SELECT * FROM " + USERS_TABLE;
+        try (Cursor cursor = db.rawQuery(select, null)) {
+            if (cursor.moveToFirst()) {
+                do {
+                    User user = new User();
+
+                    user.setVc(cursor.getString(0));
+                    user.setCaf(cursor.getString(1));
+                    user.setName(cursor.getString(2));
+                    user.setPhone(cursor.getString(3));
+                    user.setAddress(cursor.getString(4));
+                    user.setCluster(cursor.getString(5));
+                    user.setInstallDate(cursor.getString(6));
+                    user.setStatus((cursor.getInt(7) > 0));
+
+                    //debug
+
+                    for (int i = 0; i < 8; i++)
+                        Log.e(TAG, cursor.getString(i));
+                    Log.e(TAG, "\n");
+
+                    UserEntry userEntry = new UserEntry();
+                    userEntry.setUser(user);
+                    String temp = getLastPaid(cursor.getString(0));
+                    userEntry.setLastPaidDate(temp);
+                    userEntry.setIfPaid(checkIfPaid(temp));
+
+                    usersList.add(userEntry);
+
+                } while (cursor.moveToNext());
+            }
+        }
         db.close();
 
         return usersList;
     }
 
-    public List<User> getUsersByCluster(String cluster, Boolean all) {
-        List<User> usersList = new ArrayList<>();
+    public List<UserEntry> getUsersByCluster(String cluster) {
+        List<UserEntry> usersList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
-        //TODO if all = false then get unpaid
+
         String selectQuery = "SELECT * FROM " + USERS_TABLE + " WHERE cluster is " + "\"" + cluster + "\"";
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        try (Cursor cursor = db.rawQuery(selectQuery, null)) {
 
-        if (cursor.moveToFirst()) {
-            do {
-                User user = new User();
+            if (cursor.moveToFirst()) {
+                do {
+                    User user = new User();
 
-                user.setVc(cursor.getString(0));
-                user.setCaf(cursor.getString(1));
-                user.setName(cursor.getString(2));
-                user.setPhone(cursor.getString(3));
-                user.setAddress(cursor.getString(4));
-                user.setCluster(cursor.getString(5));
-                user.setInstallDate(cursor.getString(6));
-                user.setStatus((cursor.getInt(7) > 0));
+                    user.setVc(cursor.getString(0));
+                    user.setCaf(cursor.getString(1));
+                    user.setName(cursor.getString(2));
+                    user.setPhone(cursor.getString(3));
+                    user.setAddress(cursor.getString(4));
+                    user.setCluster(cursor.getString(5));
+                    user.setInstallDate(cursor.getString(6));
+                    user.setStatus((cursor.getInt(7) > 0));
 
-                usersList.add(user);
-            } while (cursor.moveToNext());
+                    UserEntry userEntry = new UserEntry();
+                    userEntry.setUser(user);
+                    String temp = getLastPaid(cursor.getString(0));
+                    userEntry.setLastPaidDate(temp);
+                    userEntry.setIfPaid(checkIfPaid(temp));
+
+                    usersList.add(userEntry);
+
+                } while (cursor.moveToNext());
+            }
+
         }
-
-        cursor.close();
         db.close();
 
         return usersList;
@@ -212,8 +266,12 @@ public class DBHandler extends SQLiteOpenHelper {
                 if (cursor.moveToFirst()) {
                     do {
                         temp = cursor.getString(0);
-                        if (!clusters.contains(temp.toLowerCase()) && !temp.equals("")) {
-                            clusters.add(temp);
+                        if (!temp.equals("")) {
+                            for (String s : clusters) {
+                                if (temp.equalsIgnoreCase(s)) {
+                                    clusters.add(temp);
+                                }
+                            }
                         }
                     } while (cursor.moveToNext());
                 }
@@ -250,11 +308,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public void deleteTransaction(Transaction t) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-        values.put(KEY_AMOUNT, t.getAmount());
-        values.put(KEY_DATE, t.getDateTime());
-
-        db.update(TRANSACTIONS_TABLE, values, KEY_VC + " = " + "\"" + t.getVc() + "\"", null);
+        db.delete(TRANSACTIONS_TABLE, KEY_VC + " = ?", new String[]{t.getVc()});
         db.close();
     }
 
@@ -263,7 +317,7 @@ public class DBHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         Cursor cursor = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE + " WHERE " +
-                KEY_VC + " = " + "\"" + vc + "\"", null);
+                KEY_VC + " = " + "\"" + vc + "\"" + " ORDER BY " + KEY_DATE + " DESC", null);
         if (cursor.moveToFirst()) {
             do {
                 Transaction transaction = new Transaction();
@@ -293,9 +347,9 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public List<Entry> getLog() {
+    public List<TransactionEntry> getLog() {
         SQLiteDatabase db = this.getWritableDatabase();
-        List<Entry> entries = new ArrayList<>();
+        List<TransactionEntry> entries = new ArrayList<>();
         String s;
 
         try (Cursor cursor = db.rawQuery("SELECT * FROM " + LOG_TABLE
@@ -324,10 +378,10 @@ public class DBHandler extends SQLiteOpenHelper {
                                 + " AND " + KEY_ID + " is " + i, null);
                         c2.moveToFirst();
 
-                        Entry entry = new Entry();
-                        entry.setTransaction(transaction);
-                        entry.setUserName(c2.getString(0));
-                        entries.add(entry);
+                        TransactionEntry transactionEntry = new TransactionEntry();
+                        transactionEntry.setTransaction(transaction);
+                        transactionEntry.setUserName(c2.getString(0));
+                        entries.add(transactionEntry);
 
                         c2.close();
                     }
@@ -408,5 +462,24 @@ public class DBHandler extends SQLiteOpenHelper {
 
         db.close();
         return transList;
+    }
+
+    public int getCollection(String start, String end) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int sum = 0;
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE + " WHERE " +
+                KEY_DATE + " BETWEEN DATETIME(" + "\"" + start + "\"" + ")" +
+                " AND DATETIME(" + "\"" + end + "\"" + ")", null);
+        if (cursor.moveToFirst()) {
+            do {
+                sum += cursor.getInt(2);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        return sum;
     }
 }

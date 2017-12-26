@@ -13,7 +13,7 @@ import java.util.List;
 public class HistoryActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
-    List<Entry> entries;
+    List<TransactionEntry> entries;
     DBHandler db;
     TextView emptyText;
 
@@ -32,11 +32,10 @@ public class HistoryActivity extends AppCompatActivity {
         db = new DBHandler(this);
 
         entries = db.getLog();
-        if (entries != null) {
+        if (entries.isEmpty()) {
             HistoryAdapter adapter = new HistoryAdapter(entries);
             recyclerView.setAdapter(adapter);
         } else {
-            //FIXME
             emptyText.setVisibility(View.VISIBLE);
         }
 

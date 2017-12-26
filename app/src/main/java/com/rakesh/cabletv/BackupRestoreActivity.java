@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class BackupRestoreActivity extends AppCompatActivity {
 
@@ -73,15 +74,17 @@ public class BackupRestoreActivity extends AppCompatActivity {
         });
 
         addUsers.setOnClickListener(v -> {
-            Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-            i.addCategory(Intent.CATEGORY_DEFAULT);
-            startActivityForResult(Intent.createChooser(i, "Choose Users CSV File"), 100);
+            new addUsers(this, rootDir + "/userlist.csv").execute();
+//            Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+//            i.addCategory(Intent.CATEGORY_DEFAULT);
+//            startActivityForResult(Intent.createChooser(i, "Choose Users CSV File"), 100);
         });
 
         addTransactions.setOnClickListener(v -> {
-            Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-            i.addCategory(Intent.CATEGORY_DEFAULT);
-            startActivityForResult(Intent.createChooser(i, "Choose Transactions CSV File"), 101);
+            new addTransactions(this, rootDir + "/userlist.csv").execute();
+//            Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+//            i.addCategory(Intent.CATEGORY_DEFAULT);
+//            startActivityForResult(Intent.createChooser(i, "Choose Transactions CSV File"), 101);
         });
     }
 
@@ -96,10 +99,10 @@ public class BackupRestoreActivity extends AppCompatActivity {
                     filePath.setText(preferences.getString("filepath", rootDir));
                     break;
                 case 100:
-                    new addUsers(this, data.getData().toString()).execute();
+                    new addUsers(this, rootDir + "/userlist.csv").execute();
                     break;
                 case 101:
-                    new addTransactions(this, data.getData().toString()).execute();
+                    new addTransactions(this, rootDir + "/userlist.csv").execute();
                     break;
             }
         }
@@ -107,7 +110,7 @@ public class BackupRestoreActivity extends AppCompatActivity {
 
     public String getTimeInstance() {
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy_hh-mm-ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy_hh-mm-ss", Locale.getDefault());
         return sdf.format(cal.getTime());
     }
 

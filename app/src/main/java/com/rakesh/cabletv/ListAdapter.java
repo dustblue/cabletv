@@ -8,25 +8,27 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckedTextView;
 import android.widget.TextView;
 
 import java.util.List;
 
 class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> {
 
-    private List<User> mUsers;
+    private List<UserEntry> mUsers;
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView name, lastPaidDate;
+        TextView lastPaidDate;
+        CheckedTextView name;
 
         MyViewHolder(View view) {
             super(view);
-            name = (TextView) view.findViewById(R.id.item_name);
+            name = (CheckedTextView) view.findViewById(R.id.item_name);
             lastPaidDate = (TextView) view.findViewById(R.id.item_last_paid_date);
         }
     }
 
-    ListAdapter(List<User> users) {
+    ListAdapter(List<UserEntry> users) {
         this.mUsers = users;
     }
 
@@ -41,10 +43,14 @@ class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> {
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        User user = mUsers.get(position);
-        holder.name.setText(user.getName());
-        //YKWTODO
-        holder.lastPaidDate.setText(user.getInstallDate());
+        UserEntry userEntry = mUsers.get(position);
+        holder.name.setText(userEntry.getUser().getName());
+        if(userEntry.isIfPaid()) {
+            holder.name.setCheckMarkDrawable(R.drawable.ic_check_green);
+        } else {
+            holder.name.setCheckMarkDrawable(R.drawable.ic_cross_red);
+        }
+        holder.lastPaidDate.setText(userEntry.getLastPaidDate());
     }
 
     @Override

@@ -4,7 +4,7 @@ package com.rakesh.cabletv;
  * Created by Rakesh on 22-12-2017.
  */
 
-class Entry {
+class TransactionEntry {
     private String userName;
     private Transaction transaction;
 

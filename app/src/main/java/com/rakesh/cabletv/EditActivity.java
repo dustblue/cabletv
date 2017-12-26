@@ -55,17 +55,6 @@ public class EditActivity extends AppCompatActivity {
 
         editOrAdd();
 
-        /*
-        Dummy Data
-        User user = new User();
-        user.setName("Nithya");
-        user.setPhone("9655768683");
-        user.setAddress("73, Patel Street, Veeriampalayam");
-        user.setCaf("CAF: ABCDEFG");
-        user.setVc("VC: 12345R6");
-        user.setInstallDate("Installed On: 01/12/17");
-        */
-
         installDateField.setOnClickListener(view -> showDatePicker());
 
         fabSave = (FloatingActionButton) findViewById(R.id.ok_edit);
@@ -81,8 +70,14 @@ public class EditActivity extends AppCompatActivity {
         });
 
         fabDelete = (FloatingActionButton) findViewById(R.id.delete);
-        fabDelete.setOnClickListener(view -> Snackbar.make(view, "Delete yet to be implemented", Snackbar.LENGTH_LONG)
-                .setAction("OK", null).show());
+        fabDelete.setOnClickListener(view -> {
+            String vc = getIntent().getStringExtra("vc");
+            if(vc != null) {
+                db.deleteUser(vc);
+            } else {
+                onBackPressed();
+            }
+        });
 
     }
 
@@ -189,8 +184,8 @@ public class EditActivity extends AppCompatActivity {
         }
 
         protected Void doInBackground(Void... args) {
-            User user = new User(name, phone, address, address.split(",")[1].trim(),
-                    caf, vc1, installDate, isActive.isChecked());
+            User user = new User(vc1, caf, name, phone, address, address.split(",")[1].trim(),
+                    installDate, isActive.isChecked());
 
             if (editFlag)
                 db.updateUser(user, vc1);

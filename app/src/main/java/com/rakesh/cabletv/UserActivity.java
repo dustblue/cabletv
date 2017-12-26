@@ -18,8 +18,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
-import android.widget.CheckedTextView;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -76,7 +74,7 @@ public class UserActivity extends AppCompatActivity {
         month = now.get(Calendar.MONTH);
         year = now.get(Calendar.YEAR);
 
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         dateField.setText(dateFormat.format(date));
 
         dateField.setOnClickListener(view -> showDatePicker());
@@ -141,7 +139,7 @@ public class UserActivity extends AppCompatActivity {
         cafText.setText(foo);
         vcText.setText(bar);
         installDateText.setText(far);
-        if(user.getStatus())
+        if (user.getStatus())
             active.setChecked(true);
         else
             active.setChecked(false);
@@ -153,7 +151,7 @@ public class UserActivity extends AppCompatActivity {
             day = i2;
             month = i1;
             year = i;
-            dateField.setText(i2 + "/" + (i1 + 1) + "/" + i);
+            dateField.setText(i2 + "-" + (i1 + 1) + "-" + i);
         }, year, month, day);
         datePickerDialog.setTitle("Select Date");
         datePickerDialog.show();
@@ -185,7 +183,12 @@ public class UserActivity extends AppCompatActivity {
         }
 
         protected Void doInBackground(Void... args) {
-            db.addTransaction(new Transaction(vc, Integer.parseInt(amountText), dateText));
+            SimpleDateFormat sdf = new SimpleDateFormat("hh-mm-ss", Locale.getDefault());
+            Calendar now = Calendar.getInstance();
+            sdf.format(now.getTime());
+
+            db.addTransaction(new Transaction(vc, Integer.parseInt(amountText),
+                    dateText + " " + sdf.format(now.getTime())));
             return null;
         }
 

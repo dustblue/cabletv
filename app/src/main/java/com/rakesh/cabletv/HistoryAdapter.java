@@ -14,7 +14,7 @@ import java.util.List;
 
 class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyViewHolder> {
 
-    private List<Entry> entries;
+    private List<TransactionEntry> entries;
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView name, date, amount;
@@ -27,7 +27,7 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyViewHolder> {
         }
     }
 
-    HistoryAdapter(List<Entry> entries) {
+    HistoryAdapter(List<TransactionEntry> entries) {
         this.entries = entries;
     }
 
@@ -42,10 +42,10 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyViewHolder> {
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Entry entry = entries.get(position);
-        holder.name.setText(entry.getUserName());
-        holder.date.setText(entry.getTransaction().getDateTime());
-        holder.amount.setText(String.valueOf(entry.getTransaction().getAmount()));
+        TransactionEntry transactionEntry = entries.get(position);
+        holder.name.setText(transactionEntry.getUserName());
+        holder.date.setText(transactionEntry.getTransaction().getDateTime());
+        holder.amount.setText(String.valueOf(transactionEntry.getTransaction().getAmount()));
     }
 
     @Override

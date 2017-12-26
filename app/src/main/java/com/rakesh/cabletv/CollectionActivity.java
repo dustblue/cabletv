@@ -14,7 +14,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 public class CollectionActivity extends AppCompatActivity implements View.OnClickListener, View.OnFocusChangeListener {
 
@@ -159,14 +161,13 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
         TimePickerDialog mTimePicker;
         mTimePicker = new TimePickerDialog(CollectionActivity.this, (timePicker, selectedHour, selectedMinute) -> {
 
-            //FIXME 12 PM shows 00 PM
             mStartHour = selectedHour;
             mStartMinute = selectedMinute;
-            if (mStartHour >= 12) {
+            if (mStartHour > 12) {
                 if (selectedMinute / 10 == 0) {
-                    startTime.setText((selectedHour-12) + ":0" + selectedMinute + " PM");
+                    startTime.setText((selectedHour - 12) + ":0" + selectedMinute + " PM");
                 } else {
-                    startTime.setText((selectedHour-12) + ":" + selectedMinute + " PM");
+                    startTime.setText((selectedHour - 12) + ":" + selectedMinute + " PM");
                 }
             } else {
                 if (selectedMinute / 10 == 0) {
@@ -197,9 +198,9 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
             mEndMinute = selectedMinute;
             if (mEndHour >= 12) {
                 if (selectedMinute / 10 == 0) {
-                    endTime.setText((selectedHour-12) + ":0" + selectedMinute + " PM");
+                    endTime.setText((selectedHour - 12) + ":0" + selectedMinute + " PM");
                 } else {
-                    endTime.setText((selectedHour-12) + ":" + selectedMinute + " PM");
+                    endTime.setText((selectedHour - 12) + ":" + selectedMinute + " PM");
                 }
             } else {
                 if (selectedMinute / 10 == 0) {
@@ -240,10 +241,12 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
 
     public void checkCollection() {
         db = new DBHandler(this);
-        //TODO Get collection
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh-mm-ss", Locale.getDefault());
+        int amount = db.getCollection(sdf.format(chosenEndTime.getTime()),
+                sdf.format(chosenStartTime.getTime()));
         totalText.setVisibility(View.VISIBLE);
         total.setVisibility(View.VISIBLE);
-        total.setText("1500");
+        total.setText(amount);
     }
 
 }
