@@ -34,7 +34,7 @@ public class TransactionActivity extends AppCompatActivity {
         String username = getIntent().getStringExtra("username");
 
         transactionsList = db.getTransactionsByUser(vc);
-        if (transactionsList.isEmpty()) {
+        if (!transactionsList.isEmpty()) {
             TransactionsAdapter adapter = new TransactionsAdapter(transactionsList, username);
             recyclerView.setAdapter(adapter);
         } else {

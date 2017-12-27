@@ -182,7 +182,7 @@ public class BackupRestoreActivity extends AppCompatActivity {
                 row = (String[]) object;
                 if (row.length == 7) {
                     db.addUser(new User(row[0], row[1], row[2], row[3], row[4]
-                            , row[4].split(",")[1], row[5], Integer.parseInt(row[6]) > 0));
+                            , row[4].split(",")[1].trim(), row[5], Integer.parseInt(row[6]) > 0));
                 } else {
                     Toast.makeText(this, "Invalid Format of Data", Toast.LENGTH_LONG).show();
                     return;

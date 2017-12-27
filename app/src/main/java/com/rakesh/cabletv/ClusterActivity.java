@@ -22,7 +22,7 @@ public class ClusterActivity extends AppCompatActivity {
         emptyText = (TextView) findViewById(R.id.cluster_empty_text);
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.cluster_view);
         recyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 2);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 3);
         recyclerView.setLayoutManager(layoutManager);
 
         db = new DBHandler(this);

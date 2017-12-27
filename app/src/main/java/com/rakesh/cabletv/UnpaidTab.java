@@ -22,6 +22,7 @@ public class UnpaidTab extends Fragment {
     RecyclerView recyclerView;
     private ListAdapter mAdapter;
     List<UserEntry> userList;
+    List<UserEntry> unpaidList;
     DBHandler db;
     String cluster;
 
@@ -38,6 +39,7 @@ public class UnpaidTab extends Fragment {
         }
 
         db = new DBHandler(getContext());
+        unpaidList = new ArrayList<>();
 
         if (cluster.equals("All Users")) {
             userList = db.getAllUsers();
@@ -52,7 +54,12 @@ public class UnpaidTab extends Fragment {
         if (userList.isEmpty()) {
             emptyText.setVisibility(View.VISIBLE);
         } else {
-            mAdapter = new ListAdapter(userList);
+            for(UserEntry userEntry : userList) {
+                if(!userEntry.isIfPaid()) {
+                    unpaidList.add(userEntry);
+                }
+            }
+            mAdapter = new ListAdapter(unpaidList);
             recyclerView.setAdapter(mAdapter);
         }
 

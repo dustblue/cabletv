@@ -8,13 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class DBHandler extends SQLiteOpenHelper {
 
@@ -157,25 +153,23 @@ public class DBHandler extends SQLiteOpenHelper {
             cursor.moveToFirst();
             return cursor.getString(3);
         } catch (Exception e) {
-            return "Unavailable";
+            return "Last Paid N/A";
         }
     }
 
     public boolean checkIfPaid(String lastPaidDate) {
+        boolean flag = false;
+        Calendar now = Calendar.getInstance();
         try {
-            Date date = new SimpleDateFormat("dd-mm-yyyy hh-mm-ss", Locale.getDefault())
-                    .parse(lastPaidDate);
-            Calendar lastPaid = Calendar.getInstance();
-            lastPaid.setTime(date);
-            Calendar now = Calendar.getInstance();
-            if (lastPaid.get(Calendar.MONTH) >= now.get(Calendar.MONTH))
-                return true;
-        } catch (ParseException e) {
-            Log.e(TAG, "Parse Date Error" + e.getMessage());
+            int x = Integer.parseInt(String.valueOf(lastPaidDate.charAt(3))) * 10
+                    + Integer.parseInt(String.valueOf(lastPaidDate.charAt(4)));
+            int y = now.get(Calendar.MONTH) + 1;
+            if (x >= y)
+                flag = true;
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return false;
+        return flag;
     }
 
     public List<UserEntry> getAllUsers() {
@@ -258,7 +252,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public String[] getClusters() {
         List<String> clusters = new ArrayList<>();
-        String temp = null;
+        String temp;
         String select = "SELECT DISTINCT " + KEY_CLUSTER + " FROM " + USERS_TABLE;
 
         try (SQLiteDatabase db = this.getReadableDatabase()) {
@@ -266,24 +260,23 @@ public class DBHandler extends SQLiteOpenHelper {
                 if (cursor.moveToFirst()) {
                     do {
                         temp = cursor.getString(0);
-                        if (!temp.equals("")) {
-                            for (String s : clusters) {
-                                if (temp.equalsIgnoreCase(s)) {
-                                    clusters.add(temp);
-                                }
+                        boolean flag = false;
+                        for (String s : clusters) {
+                            if (temp.equalsIgnoreCase(s)) {
+                                flag = true;
                             }
                         }
+                        if (!flag)
+                            clusters.add(temp);
                     } while (cursor.moveToNext());
                 }
             }
         }
-        if (temp != null) {
-            String[] cls = new String[clusters.size()];
-            clusters.toArray(cls);
-            return cls;
-        } else {
-            return null;
-        }
+
+        String[] cls = new String[clusters.size()];
+        clusters.toArray(cls);
+        return cls;
+
     }
 
     public void addTransaction(Transaction t) {

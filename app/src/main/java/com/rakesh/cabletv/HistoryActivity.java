@@ -32,7 +32,7 @@ public class HistoryActivity extends AppCompatActivity {
         db = new DBHandler(this);
 
         entries = db.getLog();
-        if (entries.isEmpty()) {
+        if (!entries.isEmpty()) {
             HistoryAdapter adapter = new HistoryAdapter(entries);
             recyclerView.setAdapter(adapter);
         } else {
