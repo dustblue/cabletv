@@ -4,6 +4,7 @@ package com.rakesh.cabletv;
  * Created by Rakesh on 13-12-2017.
  */
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,6 +46,9 @@ class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> {
     public void onBindViewHolder(MyViewHolder holder, int position) {
         UserEntry userEntry = mUsers.get(position);
         holder.name.setText(userEntry.getUser().getName());
+        if(!userEntry.getUser().getStatus()) {
+            holder.name.setTextColor(Color.RED);
+        }
         if(userEntry.isIfPaid()) {
             holder.name.setCheckMarkDrawable(R.drawable.ic_check_green);
         } else {

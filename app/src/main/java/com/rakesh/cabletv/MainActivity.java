@@ -14,8 +14,9 @@ public class MainActivity extends AppCompatActivity {
             "All Users",
             "Clusters",
             "History",
-            "Collection",
-            "Backup/Restore"
+            "Inactive",
+            "Backup/Restore",
+            "Collection"
     };
 
     private final int itemImages[] = {
@@ -23,8 +24,9 @@ public class MainActivity extends AppCompatActivity {
             R.drawable.ic_all_users,
             R.drawable.ic_clusters,
             R.drawable.ic_history,
-            R.drawable.ic_collection,
-            R.drawable.ic_backup
+            R.drawable.ic_inactive,
+            R.drawable.ic_backup,
+            R.drawable.ic_collection
     };
 
     @Override
@@ -36,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 3);
         recyclerView.setLayoutManager(layoutManager);
+
+        //TODO Add Feedback/Report Error Activity
 
         GridAdapter adapter = new GridAdapter(items, itemImages);
         recyclerView.setAdapter(adapter);
@@ -59,10 +63,13 @@ public class MainActivity extends AppCompatActivity {
                                     startActivity(new Intent(MainActivity.this, HistoryActivity.class));
                                     break;
                                 case 4:
-                                    startActivity(new Intent(MainActivity.this, CollectionActivity.class));
+                                    startActivity(new Intent(MainActivity.this, InactiveActivity.class));
                                     break;
                                 case 5:
                                     startActivity(new Intent(MainActivity.this, BackupRestoreActivity.class));
+                                    break;
+                                case 6:
+                                    startActivity(new Intent(MainActivity.this, CollectionActivity.class));
                                     break;
                                 default:
                                     break;

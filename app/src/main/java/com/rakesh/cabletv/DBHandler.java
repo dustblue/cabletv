@@ -190,11 +190,13 @@ public class DBHandler extends SQLiteOpenHelper {
                     user.setInstallDate(cursor.getString(6));
                     user.setStatus((cursor.getInt(7) > 0));
 
-                    //debug
+                    /*debug
 
                     for (int i = 0; i < 8; i++)
                         Log.e(TAG, cursor.getString(i));
                     Log.e(TAG, "\n");
+
+                    */
 
                     UserEntry userEntry = new UserEntry();
                     userEntry.setUser(user);
@@ -244,6 +246,42 @@ public class DBHandler extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
             }
 
+        }
+        db.close();
+
+        return usersList;
+    }
+
+    public List<UserEntry> getInactiveUsers() {
+        List<UserEntry> usersList = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String select = "SELECT * FROM " + USERS_TABLE + " WHERE " + KEY_STATUS
+                + " = 0 ORDER BY " + KEY_NAME;
+        try (Cursor cursor = db.rawQuery(select, null)) {
+            if (cursor.moveToFirst()) {
+                do {
+                    User user = new User();
+
+                    user.setVc(cursor.getString(0));
+                    user.setCaf(cursor.getString(1));
+                    user.setName(cursor.getString(2));
+                    user.setPhone(cursor.getString(3));
+                    user.setAddress(cursor.getString(4));
+                    user.setCluster(cursor.getString(5));
+                    user.setInstallDate(cursor.getString(6));
+                    user.setStatus((cursor.getInt(7) > 0));
+
+                    UserEntry userEntry = new UserEntry();
+                    userEntry.setUser(user);
+                    String temp = getLastPaid(cursor.getString(0));
+                    userEntry.setLastPaidDate(temp);
+                    userEntry.setIfPaid(checkIfPaid(temp));
+
+                    usersList.add(userEntry);
+
+                } while (cursor.moveToNext());
+            }
         }
         db.close();
 
