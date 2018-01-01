@@ -73,9 +73,24 @@ public class EditActivity extends AppCompatActivity {
         fabDelete.setOnClickListener(view -> {
             String vc = getIntent().getStringExtra("vc");
             if(vc != null) {
-                db.deleteUser(vc);
+                new AlertDialog.Builder(this)
+                        .setTitle("Delete")
+                        .setMessage("Do you want to delete this user? Press back to discard changes")
+                        .setPositiveButton("YES, delete", (dialog, which) -> {
+                            EditActivity.super.onBackPressed();
+                            Toast.makeText(getApplicationContext(), "Deleted", Toast.LENGTH_SHORT).show();
+                            db.deleteUser(vc);
+                            finish();
+                        }).setNegativeButton("NO", (dialog, which) -> dialog.cancel()).show();
             } else {
-                onBackPressed();
+                new AlertDialog.Builder(this)
+                        .setTitle("Discard")
+                        .setMessage("Do you want to discard? Changes will not be saved!")
+                        .setPositiveButton("YES, exit", (dialog, which) -> {
+                            EditActivity.super.onBackPressed();
+                            Toast.makeText(getApplicationContext(), "Discarded changes", Toast.LENGTH_SHORT).show();
+
+                        }).setNegativeButton("NO", (dialog, which) -> dialog.cancel()).show();
             }
         });
 

@@ -1,7 +1,9 @@
 package com.rakesh.cabletv;
 
-import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AllTab extends Fragment {
@@ -23,7 +24,7 @@ public class AllTab extends Fragment {
     private ListAdapter mAdapter;
     List<UserEntry> userList;
     DBHandler db;
-    String cluster = "none";
+    String cluster = "All Users";
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -39,23 +40,11 @@ public class AllTab extends Fragment {
         }
 
         db = new DBHandler(getContext());
-
-        if (cluster.equals("All Users")) {
-            userList = db.getAllUsers();
-        } else {
-            userList = db.getUsersByCluster(cluster);
-        }
+        new getList(getActivity()).execute();
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        if (userList.isEmpty()) {
-            emptyText.setVisibility(View.VISIBLE);
-        } else {
-            mAdapter = new ListAdapter(userList);
-            recyclerView.setAdapter(mAdapter);
-        }
 
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(getContext(),
@@ -73,9 +62,7 @@ public class AllTab extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 10) {
-            if (resultCode == Activity.RESULT_OK) {
-                mAdapter.notifyDataSetChanged();
-            }
+            new getList(getActivity()).execute();
         }
     }
 
@@ -83,5 +70,43 @@ public class AllTab extends Fragment {
     public void onStop() {
         db.close();
         super.onStop();
+    }
+
+    public class getList extends AsyncTask<Void, Void, Void> {
+        private ProgressDialog dialog;
+
+        getList(Context context) {
+            dialog = new ProgressDialog(context);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setMessage("Refreshing List...");
+            dialog.setCancelable(false);
+            dialog.show();
+        }
+
+        protected Void doInBackground(Void... args) {
+            if (cluster.equals("All Users")) {
+                userList = db.getAllUsers();
+            } else {
+                userList = db.getUsersByCluster(cluster);
+            }
+
+            return null;
+        }
+
+        protected void onPostExecute(Void result) {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+
+            if (userList.isEmpty()) {
+                emptyText.setVisibility(View.VISIBLE);
+            } else {
+                mAdapter = new ListAdapter(userList);
+                recyclerView.setAdapter(mAdapter);
+            }
+        }
     }
 }

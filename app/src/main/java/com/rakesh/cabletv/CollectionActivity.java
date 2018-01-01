@@ -163,17 +163,25 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
 
             mStartHour = selectedHour;
             mStartMinute = selectedMinute;
+            //todo Optimize
+
             if (mStartHour > 12) {
                 if (selectedMinute / 10 == 0) {
                     startTime.setText((selectedHour - 12) + ":0" + selectedMinute + " PM");
                 } else {
                     startTime.setText((selectedHour - 12) + ":" + selectedMinute + " PM");
                 }
-            } else {
+            } else if (mEndHour < 12) {
                 if (selectedMinute / 10 == 0) {
                     startTime.setText(selectedHour + ":0" + selectedMinute + " AM");
                 } else {
                     startTime.setText(selectedHour + ":" + selectedMinute + " AM");
+                }
+            } else {
+                if (selectedMinute / 10 == 0) {
+                    endTime.setText(selectedHour + ":0" + selectedMinute + " PM");
+                } else {
+                    endTime.setText(selectedHour + ":" + selectedMinute + " PM");
                 }
             }
 
@@ -196,17 +204,24 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
 
             mEndHour = selectedHour;
             mEndMinute = selectedMinute;
-            if (mEndHour >= 12) {
+            //todo Optimize
+            if (mEndHour > 12) {
                 if (selectedMinute / 10 == 0) {
                     endTime.setText((selectedHour - 12) + ":0" + selectedMinute + " PM");
                 } else {
                     endTime.setText((selectedHour - 12) + ":" + selectedMinute + " PM");
                 }
-            } else {
+            } else if (mEndHour < 12) {
                 if (selectedMinute / 10 == 0) {
                     endTime.setText(selectedHour + ":0" + selectedMinute + " AM");
                 } else {
                     endTime.setText(selectedHour + ":" + selectedMinute + " AM");
+                }
+            } else {
+                if (selectedMinute / 10 == 0) {
+                    endTime.setText(selectedHour + ":0" + selectedMinute + " PM");
+                } else {
+                    endTime.setText(selectedHour + ":" + selectedMinute + " PM");
                 }
             }
 
@@ -244,9 +259,7 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh-mm-ss", Locale.getDefault());
         int amount = db.getCollection(sdf.format(chosenEndTime.getTime()),
                 sdf.format(chosenStartTime.getTime()));
-        totalText.setVisibility(View.VISIBLE);
-        total.setVisibility(View.VISIBLE);
-        total.setText(amount);
+        total.setText(String.valueOf(amount));
     }
 
 }

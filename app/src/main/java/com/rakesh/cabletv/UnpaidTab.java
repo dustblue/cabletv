@@ -1,13 +1,16 @@
 package com.rakesh.cabletv;
 
-import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +19,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.rakesh.cabletv.DBHandler.TAG;
+
 public class UnpaidTab extends Fragment {
 
     TextView emptyText;
     RecyclerView recyclerView;
     private ListAdapter mAdapter;
-    List<UserEntry> userList;
-    List<UserEntry> unpaidList;
+    List<UserEntry> userList, unpaidList;
     DBHandler db;
     String cluster;
 
@@ -40,34 +44,17 @@ public class UnpaidTab extends Fragment {
 
         db = new DBHandler(getContext());
         unpaidList = new ArrayList<>();
-
-        if (cluster.equals("All Users")) {
-            userList = db.getAllUsers();
-        } else {
-            userList = db.getUsersByCluster(cluster);
-        }
+        new getUnpaidList(getActivity()).execute();
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        if (userList.isEmpty()) {
-            emptyText.setVisibility(View.VISIBLE);
-        } else {
-            for(UserEntry userEntry : userList) {
-                if(!userEntry.isIfPaid()) {
-                    unpaidList.add(userEntry);
-                }
-            }
-            mAdapter = new ListAdapter(unpaidList);
-            recyclerView.setAdapter(mAdapter);
-        }
-
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(getContext(),
                         (view, position) -> {
                             Intent i = new Intent(getContext(), UserActivity.class);
-                            i.putExtra("vc", userList.get(position).getUser().getVc());
+                            i.putExtra("vc", unpaidList.get(position).getUser().getVc());
                             startActivityForResult(i, 11);
                         })
         );
@@ -77,9 +64,7 @@ public class UnpaidTab extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == 11) {
-            if (resultCode == Activity.RESULT_OK) {
-                mAdapter.notifyDataSetChanged();
-            }
+            new getUnpaidList(getActivity()).execute();
         }
     }
 
@@ -87,5 +72,63 @@ public class UnpaidTab extends Fragment {
     public void onStop(){
         db.close();
         super.onStop();
+    }
+
+    public class getUnpaidList extends AsyncTask<Void, Void, Void> {
+        private ProgressDialog mDialog;
+
+        public getUnpaidList(Context context) {
+            mDialog = new ProgressDialog(context);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            mDialog.setMessage("Refreshing List...");
+            mDialog.setCancelable(false);
+            mDialog.show();
+        }
+
+        protected Void doInBackground(Void... args) {
+            if (cluster.equals("All Users")) {
+                userList = db.getAllUsers();
+            } else {
+                userList = db.getUsersByCluster(cluster);
+            }
+            if (!userList.isEmpty()) {
+                unpaidList.clear();
+                for(UserEntry userEntry : userList) {
+                    if(!userEntry.isIfPaid()) {
+                        unpaidList.add(userEntry);
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        protected void onPostExecute(Void result) {
+            if (mDialog.isShowing()) {
+                mDialog.dismiss();
+            }
+
+            if (userList.isEmpty()) {
+                emptyText.setVisibility(View.VISIBLE);
+            } else {
+                mAdapter = new ListAdapter(unpaidList);
+                recyclerView.setAdapter(mAdapter);
+            }
+        }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        Log.e(TAG, "onHiddenChanged called");
+        super.onHiddenChanged(hidden);
+    }
+
+    @Override
+    public void onResume() {
+        Log.e(TAG, "onResume called");
+        super.onResume();
     }
 }

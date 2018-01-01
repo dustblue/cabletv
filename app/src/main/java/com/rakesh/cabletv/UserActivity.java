@@ -101,7 +101,6 @@ public class UserActivity extends AppCompatActivity {
 
             if (!amountText.equals("")) {
                 if (!dateText.equals("")) {
-                    //TODO Add Confirmation Alert Dialog
                     new saveTransaction(this).execute();
                 } else {
                     Snackbar.make(view, "Pick a Date", Snackbar.LENGTH_SHORT)
@@ -166,11 +165,11 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
-    private class saveTransaction extends AsyncTask<Void, Void, Void> {
+    class saveTransaction extends AsyncTask<Void, Void, Void> {
         private ProgressDialog dialog;
         private Activity mActivity;
 
-        public saveTransaction(UserActivity activity) {
+        saveTransaction(UserActivity activity) {
             dialog = new ProgressDialog(activity);
             mActivity = activity;
         }
@@ -197,8 +196,7 @@ public class UserActivity extends AppCompatActivity {
             if (dialog.isShowing()) {
                 dialog.dismiss();
             }
-            Snackbar.make(v, "Saved Transaction!!", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(v, "Saved Transaction!!", Snackbar.LENGTH_LONG).show();
         }
     }
-
 }

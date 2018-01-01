@@ -161,10 +161,9 @@ public class DBHandler extends SQLiteOpenHelper {
         boolean flag = false;
         Calendar now = Calendar.getInstance();
         try {
-            int x = Integer.parseInt(String.valueOf(lastPaidDate.charAt(3))) * 10
-                    + Integer.parseInt(String.valueOf(lastPaidDate.charAt(4)));
-            int y = now.get(Calendar.MONTH) + 1;
-            if (x >= y)
+            int month = lastPaidDate.charAt(3) * 10 + lastPaidDate.charAt(4);
+            int year = Integer.parseInt(lastPaidDate.substring(6, 10));
+            if (month >= now.get(Calendar.MONTH) + 1 && year >= now.get(Calendar.YEAR))
                 flag = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -176,7 +175,7 @@ public class DBHandler extends SQLiteOpenHelper {
         List<UserEntry> usersList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
 
-        String select = "SELECT * FROM " + USERS_TABLE;
+        String select = "SELECT * FROM " + USERS_TABLE + " ORDER BY " + KEY_NAME;
         try (Cursor cursor = db.rawQuery(select, null)) {
             if (cursor.moveToFirst()) {
                 do {
@@ -217,7 +216,8 @@ public class DBHandler extends SQLiteOpenHelper {
         List<UserEntry> usersList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
 
-        String selectQuery = "SELECT * FROM " + USERS_TABLE + " WHERE cluster is " + "\"" + cluster + "\"";
+        String selectQuery = "SELECT * FROM " + USERS_TABLE + " WHERE cluster is " + "\"" + cluster + "\""
+                + " ORDER BY " + KEY_NAME;
         try (Cursor cursor = db.rawQuery(selectQuery, null)) {
 
             if (cursor.moveToFirst()) {
@@ -301,7 +301,8 @@ public class DBHandler extends SQLiteOpenHelper {
     public void deleteTransaction(Transaction t) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        db.delete(TRANSACTIONS_TABLE, KEY_VC + " = ?", new String[]{t.getVc()});
+        db.delete(TRANSACTIONS_TABLE, KEY_VC + " = ? AND " + KEY_DATE + " = ?"
+                , new String[]{t.getVc(), t.getDateTime()});
         db.close();
     }
 
@@ -356,9 +357,8 @@ public class DBHandler extends SQLiteOpenHelper {
 
                     c1 = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE
                             + " WHERE " + KEY_ID + " = " + i, null);
-                    c1.moveToFirst();
 
-                    if (c1.getString(1) != null) {
+                    if (c1.moveToFirst()) {
 
                         Transaction transaction = new Transaction();
                         transaction.setVc(c1.getString(1));
@@ -427,9 +427,8 @@ public class DBHandler extends SQLiteOpenHelper {
 
                     c1 = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE
                             + " WHERE " + KEY_ID + " = " + i, null);
-                    c1.moveToFirst();
 
-                    if (c1.getString(1) != null) {
+                    if (c1.moveToFirst()) {
 
                         c2 = db.rawQuery("SELECT " + KEY_NAME + " FROM " + USERS_TABLE + ", "
                                 + TRANSACTIONS_TABLE + " WHERE " + TRANSACTIONS_TABLE + "." + KEY_VC
@@ -460,13 +459,12 @@ public class DBHandler extends SQLiteOpenHelper {
     public int getCollection(String start, String end) {
         SQLiteDatabase db = this.getWritableDatabase();
         int sum = 0;
-
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE + " WHERE " +
-                KEY_DATE + " BETWEEN DATETIME(" + "\"" + start + "\"" + ")" +
-                " AND DATETIME(" + "\"" + end + "\"" + ")", null);
+        Cursor cursor = db.rawQuery("SELECT " + KEY_AMOUNT + " FROM " + TRANSACTIONS_TABLE
+                + " WHERE " + KEY_DATE + " BETWEEN " + "\"" + start + "\""
+                + " AND " + "\"" + end + "\"", null);
         if (cursor.moveToFirst()) {
             do {
-                sum += cursor.getInt(2);
+                sum += cursor.getInt(0);
             } while (cursor.moveToNext());
         }
 
