@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
 public class ListActivity extends AppCompatActivity {
 
@@ -23,10 +25,11 @@ public class ListActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setTitle(cluster);
 
         Intent intent = getIntent();
         cluster = intent.getStringExtra("cluster");
-        getSupportActionBar().setTitle(cluster);
 
         adapter = new ViewPagerAdapter(getSupportFragmentManager(), titles, numberOfTabs, cluster);
         pager = (ViewPager) findViewById(R.id.pager);

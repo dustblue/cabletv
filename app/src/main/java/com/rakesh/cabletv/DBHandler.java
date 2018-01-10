@@ -386,37 +386,33 @@ public class DBHandler extends SQLiteOpenHelper {
 
         try (Cursor cursor = db.rawQuery("SELECT * FROM " + LOG_TABLE
                 + " ORDER BY " + KEY_LOGDATE + " DESC", null)) {
-            Cursor c1, c2;
 
             if (cursor.moveToFirst()) {
                 do {
                     s = cursor.getString(0);
                     int i = cursor.getInt(1);
 
-                    c1 = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE
-                            + " WHERE " + KEY_ID + " = " + i, null);
+                    try (Cursor c1 = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE
+                            + " WHERE " + KEY_ID + " = " + i, null)) {
+                        if (c1.moveToFirst()) {
+                            Transaction transaction = new Transaction();
+                            transaction.setVc(c1.getString(1));
+                            transaction.setAmount(c1.getInt(2));
+                            transaction.setDateTime(s);
 
-                    if (c1.moveToFirst()) {
-
-                        Transaction transaction = new Transaction();
-                        transaction.setVc(c1.getString(1));
-                        transaction.setAmount(c1.getInt(2));
-                        transaction.setDateTime(s);
-
-                        c2 = db.rawQuery("SELECT " + KEY_NAME + " FROM " + USERS_TABLE + ", "
-                                + TRANSACTIONS_TABLE + " WHERE " + TRANSACTIONS_TABLE + "." + KEY_VC
-                                + " = " + USERS_TABLE + "." + KEY_VC
-                                + " AND " + KEY_ID + " is " + i, null);
-                        c2.moveToFirst();
-
-                        TransactionEntry transactionEntry = new TransactionEntry();
-                        transactionEntry.setTransaction(transaction);
-                        transactionEntry.setUserName(c2.getString(0));
-                        entries.add(transactionEntry);
-
-                        c2.close();
+                            try (Cursor c2 = db.rawQuery("SELECT " + KEY_NAME + " FROM " + USERS_TABLE + ", "
+                                    + TRANSACTIONS_TABLE + " WHERE " + TRANSACTIONS_TABLE + "." + KEY_VC
+                                    + " = " + USERS_TABLE + "." + KEY_VC
+                                    + " AND " + KEY_ID + " is " + i, null)) {
+                                if (c2.moveToFirst()) {
+                                    TransactionEntry transactionEntry = new TransactionEntry();
+                                    transactionEntry.setTransaction(transaction);
+                                    transactionEntry.setUserName(c2.getString(0));
+                                    entries.add(transactionEntry);
+                                }
+                            }
+                        }
                     }
-                    c1.close();
 
                 } while (cursor.moveToNext());
             }

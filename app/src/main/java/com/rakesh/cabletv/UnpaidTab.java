@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.rakesh.cabletv.DBHandler.TAG;
+import static com.rakesh.cabletv.UserActivity.RESULT_CHANGED;
 
 public class UnpaidTab extends Fragment {
 
@@ -28,6 +29,8 @@ public class UnpaidTab extends Fragment {
     private ListAdapter mAdapter;
     List<UserEntry> userList, unpaidList;
     DBHandler db;
+    int pos;
+    RecyclerView.LayoutManager layoutManager;
     String cluster;
 
     @Override
@@ -46,8 +49,8 @@ public class UnpaidTab extends Fragment {
         unpaidList = new ArrayList<>();
         new getUnpaidList(getActivity()).execute();
 
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(mLayoutManager);
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         recyclerView.addOnItemTouchListener(
@@ -55,21 +58,29 @@ public class UnpaidTab extends Fragment {
                         (view, position) -> {
                             Intent i = new Intent(getContext(), UserActivity.class);
                             i.putExtra("vc", unpaidList.get(position).getUser().getVc());
+                            pos = position;
                             startActivityForResult(i, 11);
                         })
         );
 
         return v;
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == 11) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 11 && resultCode == RESULT_CHANGED) {
             new getUnpaidList(getActivity()).execute();
+        }
+        try {
+            layoutManager.scrollToPosition(pos);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Override
-    public void onStop(){
+    public void onStop() {
         db.close();
         super.onStop();
     }
@@ -96,8 +107,8 @@ public class UnpaidTab extends Fragment {
             }
             if (!userList.isEmpty()) {
                 unpaidList.clear();
-                for(UserEntry userEntry : userList) {
-                    if(!userEntry.isIfPaid()) {
+                for (UserEntry userEntry : userList) {
+                    if (!userEntry.isIfPaid()) {
                         unpaidList.add(userEntry);
                     }
                 }
@@ -120,15 +131,4 @@ public class UnpaidTab extends Fragment {
         }
     }
 
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        Log.e(TAG, "onHiddenChanged called");
-        super.onHiddenChanged(hidden);
-    }
-
-    @Override
-    public void onResume() {
-        Log.e(TAG, "onResume called");
-        super.onResume();
-    }
 }

@@ -58,19 +58,21 @@ public class BackupRestoreActivity extends AppCompatActivity {
         rootDir = Environment.getExternalStorageDirectory().toString();
         Log.e(TAG, rootDir);
 
-        filePath.setText(preferences.getString("filepath", rootDir));
+        filePath.setText(rootDir);
+//      filePath.setText(preferences.getString("filepath", rootDir));
         lastBackup.setText(preferences.getString("backup_time", "Not Available"));
         lastUsersRestore.setText(preferences.getString("last_user_add", "Not Available"));
         lastTransRestore.setText(preferences.getString("last_trans_add", "Not Available"));
 
         changePath.setOnClickListener(v -> {
-            Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-            i.addCategory(Intent.CATEGORY_DEFAULT);
-            startActivityForResult(Intent.createChooser(i, "Choose directory"), 99);
+            //Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+            //i.addCategory(Intent.CATEGORY_DEFAULT);
+            //startActivityForResult(Intent.createChooser(i, "Choose directory"), 99);
         });
 
         backupNow.setOnClickListener(v -> {
-            new backup(this, preferences.getString("filepath", rootDir)).execute();
+            new backup(this, rootDir).execute();
+//            new backup(this, preferences.getString("filepath", rootDir)).execute();
         });
 
         addUsers.setOnClickListener(v -> {
@@ -81,7 +83,7 @@ public class BackupRestoreActivity extends AppCompatActivity {
         });
 
         addTransactions.setOnClickListener(v -> {
-            new addTransactions(this, rootDir + "/userlist.csv").execute();
+            new addTransactions(this, rootDir + "/transactionlist.csv").execute();
 //            Intent i = new Intent(Intent.ACTION_GET_CONTENT);
 //            i.addCategory(Intent.CATEGORY_DEFAULT);
 //            startActivityForResult(Intent.createChooser(i, "Choose Transactions CSV File"), 101);

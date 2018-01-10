@@ -3,8 +3,7 @@ package com.rakesh.cabletv;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -23,6 +22,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import static com.rakesh.cabletv.UserActivity.RESULT_DELETED;
 
 public class EditActivity extends AppCompatActivity {
 
@@ -72,25 +73,18 @@ public class EditActivity extends AppCompatActivity {
         fabDelete = (FloatingActionButton) findViewById(R.id.delete);
         fabDelete.setOnClickListener(view -> {
             String vc = getIntent().getStringExtra("vc");
-            if(vc != null) {
+            if (vc != null) {
                 new AlertDialog.Builder(this)
                         .setTitle("Delete")
                         .setMessage("Do you want to delete this user? Press back to discard changes")
                         .setPositiveButton("YES, delete", (dialog, which) -> {
-                            EditActivity.super.onBackPressed();
                             Toast.makeText(getApplicationContext(), "Deleted", Toast.LENGTH_SHORT).show();
                             db.deleteUser(vc);
+                            setResult(RESULT_DELETED);
                             finish();
                         }).setNegativeButton("NO", (dialog, which) -> dialog.cancel()).show();
             } else {
-                new AlertDialog.Builder(this)
-                        .setTitle("Discard")
-                        .setMessage("Do you want to discard? Changes will not be saved!")
-                        .setPositiveButton("YES, exit", (dialog, which) -> {
-                            EditActivity.super.onBackPressed();
-                            Toast.makeText(getApplicationContext(), "Discarded changes", Toast.LENGTH_SHORT).show();
-
-                        }).setNegativeButton("NO", (dialog, which) -> dialog.cancel()).show();
+                onBackPressed();
             }
         });
 
@@ -98,14 +92,11 @@ public class EditActivity extends AppCompatActivity {
 
     public void showDatePicker() {
         DatePickerDialog datePickerDialog;
-        datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-                day = i2;
-                month = i1;
-                year = i;
-                installDateField.setText(i2 + "/" + (i1 + 1) + "/" + i);
-            }
+        datePickerDialog = new DatePickerDialog(this, (datePicker, i, i1, i2) -> {
+            day = i2;
+            month = i1;
+            year = i;
+            installDateField.setText(i2 + "/" + (i1 + 1) + "/" + i);
         }, year, month, day);
         datePickerDialog.setTitle("Select Date");
         datePickerDialog.show();
@@ -226,7 +217,7 @@ public class EditActivity extends AppCompatActivity {
                 .setTitle("Discard")
                 .setMessage("Do you want to exit? Changes will not be saved!")
                 .setPositiveButton("YES, exit", (dialog, which) -> {
-                    EditActivity.super.onBackPressed();
+                    finish();
                     Toast.makeText(getApplicationContext(), "Discarded changes", Toast.LENGTH_SHORT).show();
 
                 }).setNegativeButton("NO", (dialog, which) -> dialog.cancel()).show();

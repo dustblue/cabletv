@@ -29,7 +29,9 @@ import java.util.Locale;
 
 public class UserActivity extends AppCompatActivity {
 
-    public static final int EDIT_REQUEST_CODE = 21;
+    public static final int EDIT_REQUEST = 210;
+    public static final int RESULT_DELETED = 270;
+    public static final int RESULT_CHANGED = 274;
     DBHandler db;
     FloatingActionButton fabOk, fabEdit, fabTrans;
     CheckBox active;
@@ -38,6 +40,7 @@ public class UserActivity extends AppCompatActivity {
     int year, month, day;
     View v;
     String vc, uri, amountText, dateText;
+    boolean isModified = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,13 +113,13 @@ public class UserActivity extends AppCompatActivity {
                 Snackbar.make(view, "Enter an amount", Snackbar.LENGTH_SHORT)
                         .setAction("GO", view12 -> amountField.requestFocus()).show();
             }
-
+            isModified = true;
         });
 
         fabEdit.setOnClickListener(view -> {
             Intent i = new Intent(UserActivity.this, EditActivity.class);
             i.putExtra("vc", vcText.getText().toString().split(" ")[1]);
-            startActivityForResult(i, EDIT_REQUEST_CODE);
+            startActivityForResult(i, EDIT_REQUEST);
         });
 
         fabTrans.setOnClickListener(view -> {
@@ -158,11 +161,25 @@ public class UserActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == EDIT_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        isModified = true;
+        if (requestCode == EDIT_REQUEST) {
+            if (resultCode == RESULT_DELETED) {
+                setResult(RESULT_CHANGED);
+                finish();
+            } else {
                 setValues();
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isModified) {
+            setResult(RESULT_CHANGED);
+        }
+        super.onBackPressed();
     }
 
     class saveTransaction extends AsyncTask<Void, Void, Void> {

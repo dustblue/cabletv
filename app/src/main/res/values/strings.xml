@@ -47,4 +47,5 @@
     <string name="add_users">Add Users</string>
     <string name="add_trans">Add Transactions</string>
     <string name="title_activity_backup_restore">Backup And Restore</string>
+    <string name="search">Search</string>
 </resources>
