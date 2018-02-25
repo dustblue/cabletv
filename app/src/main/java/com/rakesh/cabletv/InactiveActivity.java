@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import static com.rakesh.cabletv.UserActivity.RESULT_CHANGED;
+
 public class InactiveActivity extends AppCompatActivity {
 
     TextView emptyText;
@@ -46,14 +48,14 @@ public class InactiveActivity extends AppCompatActivity {
                         (view, position) -> {
                             Intent i = new Intent(InactiveActivity.this, UserActivity.class);
                             i.putExtra("vc", userList.get(position).getUser().getVc());
-                            startActivityForResult(i, 12);
+                            startActivityForResult(i, 120);
                         })
         );
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 12) {
+        if (resultCode == RESULT_CHANGED) {
             userList = db.getInactiveUsers();
             adapter.notifyDataSetChanged();
         }

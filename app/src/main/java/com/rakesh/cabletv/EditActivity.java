@@ -52,7 +52,7 @@ public class EditActivity extends AppCompatActivity {
         cafField = (EditText) findViewById(R.id.caf_edit);
         vcField = (EditText) findViewById(R.id.vc_edit);
         installDateField = (EditText) findViewById(R.id.install_edit);
-        isActive = (CheckBox) findViewById(R.id.active_box);
+        isActive = (CheckBox) findViewById(R.id.active_box1);
 
         editOrAdd();
 

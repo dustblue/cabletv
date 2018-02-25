@@ -53,6 +53,7 @@ public class AllTab extends Fragment {
         emptyText = (TextView) v.findViewById(R.id.all_empty_text);
         recyclerView = (RecyclerView) v.findViewById(R.id.all_list);
 
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(cluster);
         toolbar.setOnMenuItemClickListener(item -> {
             handleMenuSearch();
             return true;
@@ -98,48 +99,47 @@ public class AllTab extends Fragment {
     protected void handleMenuSearch() {
         ActionBar action = ((AppCompatActivity) getActivity()).getSupportActionBar();
 
-        if (isSearchOpened) { //test if the search is open
+        if (isSearchOpened) {
 
-            action.setDisplayShowCustomEnabled(false); //disable a custom view inside the actionbar
-            action.setDisplayShowTitleEnabled(true); //show the title in the action bar
+            action.setDisplayShowCustomEnabled(false);
+            action.setDisplayShowTitleEnabled(true);
+            action.setTitle(cluster);
 
-            //hides the keyboard
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(searchEdit.getWindowToken(), 0);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+            }
 
             mSearchAction.setIcon(R.drawable.ic_search);
-
+            new getList(getActivity()).execute();
             isSearchOpened = false;
-        } else { //open the search entry
+        } else {
 
-            action.setDisplayShowCustomEnabled(true); //enable it to display a
-            // custom view in the action bar.
-            action.setCustomView(R.layout.search_bar);//add the custom view
-            action.setDisplayShowTitleEnabled(false); //hide the title
+            action.setDisplayShowCustomEnabled(true);
+            action.setCustomView(R.layout.search_bar);
+            action.setDisplayShowTitleEnabled(false);
 
-            searchEdit = (EditText) action.getCustomView().findViewById(R.id.edtSearch); //the text editor
-
-            //this is a listener to do a search when the user clicks on search button
+            searchEdit = (EditText) action.getCustomView().findViewById(R.id.editSearch);
             searchEdit.setOnEditorActionListener((v, actionId, event) -> {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    doSearch(v.getText().toString());
+                    try {
+                        doSearch(v.getText().toString().trim());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        doSearch("");
+                    }
                     return true;
                 }
                 return false;
             });
 
-
             searchEdit.requestFocus();
 
-            //open the keyboard focused in the edtSearch
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.showSoftInput(searchEdit, InputMethodManager.SHOW_IMPLICIT);
             }
-
-            //add the close icon
             mSearchAction.setIcon(R.drawable.ic_close);
-
             isSearchOpened = true;
         }
     }
@@ -147,18 +147,17 @@ public class AllTab extends Fragment {
     private void doSearch(String text) {
 
         if (text.equals("")) {
-            userList = originalList;
-            mAdapter.notifyDataSetChanged();
-            return;
+            userList.clear();
+            userList.addAll(originalList);
+        } else {
+            List<UserEntry> tempList = new ArrayList<>();
+            for (UserEntry userEntry : originalList) {
+                if (userEntry.getUser().search(text))
+                    tempList.add(userEntry);
+            }
+            userList.clear();
+            userList.addAll(tempList);
         }
-
-        List<UserEntry> tempList = new ArrayList<>();
-        for (UserEntry userEntry : originalList) {
-            if (userEntry.getUser().search(text))
-                tempList.add(userEntry);
-        }
-        userList.clear();
-        userList.addAll(tempList);
         mAdapter.notifyDataSetChanged();
     }
 
@@ -168,7 +167,7 @@ public class AllTab extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 10 && resultCode == RESULT_CHANGED) {
             new getList(getActivity()).execute();
-        }
+        } else new getList(getActivity()).execute();
     }
 
     @Override
@@ -197,15 +196,18 @@ public class AllTab extends Fragment {
             } else {
                 userList = db.getUsersByCluster(cluster);
             }
-
+            originalList = userList;
             return null;
         }
 
         protected void onPostExecute(Void result) {
-            if (dialog.isShowing()) {
-                dialog.dismiss();
+            try {
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            originalList = userList;
             if (userList.isEmpty()) {
                 emptyText.setVisibility(View.VISIBLE);
             } else {
@@ -214,13 +216,10 @@ public class AllTab extends Fragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                if (mAdapter == null) {
-                    mAdapter = new ListAdapter(userList);
-                    recyclerView.setAdapter(mAdapter);
-                } else {
-                    mAdapter.notifyDataSetChanged();
-                }
+                mAdapter = new ListAdapter(userList);
+                recyclerView.setAdapter(mAdapter);
             }
+            mAdapter.notifyDataSetChanged();
         }
     }
 }

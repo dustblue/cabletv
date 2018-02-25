@@ -16,7 +16,8 @@ public class MainActivity extends AppCompatActivity {
             "History",
             "Inactive",
             "Backup/Restore",
-            "Collection"
+            "Collection",
+            "Settings"
     };
 
     private final int itemImages[] = {
@@ -26,14 +27,19 @@ public class MainActivity extends AppCompatActivity {
             R.drawable.ic_history,
             R.drawable.ic_inactive,
             R.drawable.ic_backup,
-            R.drawable.ic_collection
+            R.drawable.ic_collection,
+            R.drawable.ic_settings
     };
+
+    DBHandler db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        db = new DBHandler(this);
+        db.clearUp();
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.main_view);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 3);
@@ -70,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
                                     break;
                                 case 6:
                                     startActivity(new Intent(MainActivity.this, CollectionActivity.class));
+                                    break;
+                                case 7:
+                                    startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                                     break;
                                 default:
                                     break;

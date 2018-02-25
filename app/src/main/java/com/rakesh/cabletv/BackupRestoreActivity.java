@@ -104,7 +104,7 @@ public class BackupRestoreActivity extends AppCompatActivity {
                     new addUsers(this, rootDir + "/userlist.csv").execute();
                     break;
                 case 101:
-                    new addTransactions(this, rootDir + "/userlist.csv").execute();
+                    new addTransactions(this, rootDir + "/transactionlist.csv").execute();
                     break;
             }
         }
@@ -245,7 +245,7 @@ public class BackupRestoreActivity extends AppCompatActivity {
             for (Object object : content) {
                 row = (String[]) object;
                 if (row.length == 4) {
-                    db.addTransaction(new Transaction(row[0], Integer.parseInt(row[2]), row[3]));
+                    db.addTransaction(new Transaction(row[0], Integer.parseInt(row[2]), row[3]), true);
                 } else {
                     Snackbar.make(parent, "Invalid Format of Data", Snackbar.LENGTH_LONG).show();
                     return;

@@ -77,7 +77,7 @@ public class TransactionActivity extends AppCompatActivity {
 
             Snackbar.make(recyclerView, "Transaction Deleted", Snackbar.LENGTH_LONG)
                     .setAction("UNDO", v -> {
-                        db.addTransaction(transaction);
+                        db.addTransaction(transaction, false);
                         transactionsList.add(transaction);
                         adapter.notifyDataSetChanged();
                         Snackbar.make(recyclerView, "Transaction Restored", Snackbar.LENGTH_SHORT)

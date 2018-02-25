@@ -148,7 +148,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public String getLastPaid(String vc) {
         SQLiteDatabase db = this.getWritableDatabase();
         String selectQuery = "SELECT * FROM " + TRANSACTIONS_TABLE + " WHERE " +
-                KEY_VC + " = " + "\"" + vc + "\"" + " ORDER BY " + KEY_DATE + " DESC";
+                KEY_VC + " = " + "\"" + vc + "\"" + " ORDER BY DATETIME(" + KEY_DATE + ") DESC";
         try (Cursor cursor = db.rawQuery(selectQuery, null)) {
             cursor.moveToFirst();
             return cursor.getString(3);
@@ -161,9 +161,16 @@ public class DBHandler extends SQLiteOpenHelper {
         boolean flag = false;
         Calendar now = Calendar.getInstance();
         try {
-            int month = lastPaidDate.charAt(3) * 10 + lastPaidDate.charAt(4);
-            int year = Integer.parseInt(lastPaidDate.substring(6, 10));
-            if (month >= now.get(Calendar.MONTH) + 1 && year >= now.get(Calendar.YEAR))
+            String[] dates = lastPaidDate.split("-");
+            int month;
+            if (dates[1].length() > 1)
+                month = (dates[1].charAt(0) - 48) * 10 + (dates[1].charAt(1) - 48);
+            else
+                month = (dates[1].charAt(0) - 48);
+            int year = Integer.parseInt(dates[2].split(" ")[0]);
+            int nowMonth = now.get(Calendar.MONTH) + 1;
+            int nowYear = now.get(Calendar.YEAR);
+            if (month >= nowMonth && year >= nowYear)
                 flag = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -200,9 +207,9 @@ public class DBHandler extends SQLiteOpenHelper {
 
                     UserEntry userEntry = new UserEntry();
                     userEntry.setUser(user);
-                    String temp = getLastPaid(cursor.getString(0));
-                    userEntry.setLastPaidDate(temp);
-                    userEntry.setIfPaid(checkIfPaid(temp));
+                    String lp = getLastPaid(cursor.getString(0));
+                    userEntry.setLastPaidDate(lp);
+                    userEntry.setIfPaid(checkIfPaid(lp));
 
                     usersList.add(userEntry);
 
@@ -237,9 +244,9 @@ public class DBHandler extends SQLiteOpenHelper {
 
                     UserEntry userEntry = new UserEntry();
                     userEntry.setUser(user);
-                    String temp = getLastPaid(cursor.getString(0));
-                    userEntry.setLastPaidDate(temp);
-                    userEntry.setIfPaid(checkIfPaid(temp));
+                    String lp = getLastPaid(cursor.getString(0));
+                    userEntry.setLastPaidDate(lp);
+                    userEntry.setIfPaid(checkIfPaid(lp));
 
                     usersList.add(userEntry);
 
@@ -317,7 +324,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
 
-    public void addTransaction(Transaction t) {
+    public void addTransaction(Transaction t, boolean restoreFlag) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -327,12 +334,16 @@ public class DBHandler extends SQLiteOpenHelper {
 
         db.insert(TRANSACTIONS_TABLE, null, values);
 
-        Cursor cursor = db.rawQuery("SELECT LAST_INSERT_ROWID() FROM " + TRANSACTIONS_TABLE, null);
-        cursor.moveToFirst();
-        int i = (cursor.getInt(0));
-        updateLog(i);
+        if (!restoreFlag) {
+            try (Cursor cursor = db.rawQuery("SELECT LAST_INSERT_ROWID() FROM " + TRANSACTIONS_TABLE, null)) {
+                cursor.moveToFirst();
+                int i = (cursor.getInt(0));
+                updateLog(i);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
-        cursor.close();
         db.close();
     }
 
@@ -375,7 +386,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public void updateLog(int i) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        db.execSQL("INSERT INTO " + LOG_TABLE + " ( " + KEY_ID + " ) VALUES ( " + i + " )");
+        db.execSQL("INSERT INTO " + LOG_TABLE + " ( " + KEY_ID + " ) VALUES ( " + i + " )"); //wtf
         db.close();
     }
 
@@ -422,11 +433,32 @@ public class DBHandler extends SQLiteOpenHelper {
         return entries;
     }
 
+    public void clearUp() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try (Cursor cursor = db.rawQuery("SELECT * FROM " + USERS_TABLE, null)) {
+            if (cursor.moveToFirst()) {
+                do {
+
+                    String name = cursor.getString(2);
+                    char c = name.charAt(name.length() - 1);
+                    if (Character.getNumericValue(c) == -1 && !Character.isWhitespace(c)) {
+                        ContentValues values = new ContentValues();
+                        values.put(KEY_NAME, name.substring(0, name.length() - 1));
+
+                        db.update(USERS_TABLE, values, KEY_VC + " =?"
+                                , new String[]{cursor.getString(0)});
+                    }
+                } while (cursor.moveToNext());
+            }
+        }
+
+    }
+
     public List<String[]> backupUsers() {
         List<String[]> usersList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
 
-        try (Cursor cursor = db.rawQuery("SELECT * FROM " + USERS_TABLE, null)) {
+        try (Cursor cursor = db.rawQuery("SELECT * FROM " + USERS_TABLE + " WHERE " + KEY_VC + " NOT NULL", null)) {
             if (cursor.moveToFirst()) {
                 do {
                     String[] user = new String[]{
@@ -453,36 +485,36 @@ public class DBHandler extends SQLiteOpenHelper {
 
         try (Cursor cursor = db.rawQuery("SELECT * FROM " + LOG_TABLE
                 + " ORDER BY " + KEY_LOGDATE + " DESC", null)) {
-            Cursor c1, c2;
 
             if (cursor.moveToFirst()) {
                 do {
                     int i = cursor.getInt(1);
 
-                    c1 = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE
-                            + " WHERE " + KEY_ID + " = " + i, null);
+                    try (Cursor c1 = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE
+                            + " WHERE " + KEY_ID + " = " + i, null)) {
 
-                    if (c1.moveToFirst()) {
+                        if (c1.moveToFirst()) {
 
-                        c2 = db.rawQuery("SELECT " + KEY_NAME + " FROM " + USERS_TABLE + ", "
-                                + TRANSACTIONS_TABLE + " WHERE " + TRANSACTIONS_TABLE + "." + KEY_VC
-                                + " = " + USERS_TABLE + "." + KEY_VC
-                                + " AND " + KEY_ID + " is " + i, null);
-                        c2.moveToFirst();
+                            try (Cursor c2 = db.rawQuery("SELECT " + KEY_NAME + " FROM " + USERS_TABLE + ", "
+                                    + TRANSACTIONS_TABLE + " WHERE " + TRANSACTIONS_TABLE + "." + KEY_VC
+                                    + " = " + USERS_TABLE + "." + KEY_VC
+                                    + " AND " + KEY_ID + " is " + i, null)) {
+                                if (c2.moveToFirst()) {
 
-                        String[] user = new String[]{
-                                c1.getString(1),
-                                c2.getString(0),
-                                c1.getString(2),
-                                c1.getString(3)
-                        };
-                        transList.add(user);
+                                    String[] user = new String[]{
+                                            c1.getString(1),
+                                            c2.getString(0),
+                                            c1.getString(2),
+                                            c1.getString(3)
+                                    };
+                                    transList.add(user);
 
-                        c2.close();
+                                }
+                            }
+                        }
                     }
-                    c1.close();
-
-                } while (cursor.moveToNext());
+                }
+                while (cursor.moveToNext());
             }
         }
 
@@ -495,7 +527,9 @@ public class DBHandler extends SQLiteOpenHelper {
         int sum = 0;
         Cursor cursor = db.rawQuery("SELECT " + KEY_AMOUNT + " FROM " + TRANSACTIONS_TABLE
                 + " WHERE " + KEY_DATE + " BETWEEN " + "\"" + start + "\""
-                + " AND " + "\"" + end + "\"", null);
+                + " AND " + "\"" + end + "\"" + " AND " + "EXISTS (SELECT "
+                + KEY_VC + " FROM " + USERS_TABLE + " WHERE " + USERS_TABLE + "." + KEY_VC
+                + " = " + TRANSACTIONS_TABLE + "." + KEY_VC + ")", null);
         if (cursor.moveToFirst()) {
             do {
                 sum += cursor.getInt(0);

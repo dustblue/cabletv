@@ -94,10 +94,12 @@ class User {
     }
 
     Boolean search(String key) {
-        return this.getName().contains(key)
-                || this.getPhone().contains(key)
-                || this.getVc().contains(key)
-                || this.getCaf().contains(key)
-                || this.getAddress().contains(key);
+        return this.getName().toLowerCase().contains(key.toLowerCase())
+                || this.getPhone().contains(key);
+//        return this.getName().contains(key)
+//                || this.getPhone().contains(key)
+//                || this.getVc().contains(key)
+//                || this.getCaf().contains(key)
+//                || this.getAddress().contains(key);
     }
 }

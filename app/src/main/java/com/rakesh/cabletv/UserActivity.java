@@ -13,8 +13,10 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
@@ -22,6 +24,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -39,8 +42,10 @@ public class UserActivity extends AppCompatActivity {
     EditText amountField, dateField;
     int year, month, day;
     View v;
-    String vc, uri, amountText, dateText;
+    String vc, uri, amountText, dateText, finalDate;
     boolean isModified = false;
+    SimpleDateFormat sdf;
+    Calendar now;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +76,7 @@ public class UserActivity extends AppCompatActivity {
         amountField.setText(R.string.defAmount);
 
         dateField = (EditText) findViewById(R.id.date_paid);
-        Calendar now = Calendar.getInstance();
+        now = Calendar.getInstance();
         Date date = now.getTime();
         day = now.get(Calendar.DAY_OF_MONTH);
         month = now.get(Calendar.MONTH);
@@ -81,6 +86,15 @@ public class UserActivity extends AppCompatActivity {
         dateField.setText(dateFormat.format(date));
 
         dateField.setOnClickListener(view -> showDatePicker());
+        dateField.setOnFocusChangeListener((v, hasFocus) -> {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            }
+            if (hasFocus) {
+                showDatePicker();
+            }
+        });
 
         uri = "tel:" + phoneText.getText().toString().trim();
         phoneText.setOnClickListener(view -> {
@@ -104,6 +118,9 @@ public class UserActivity extends AppCompatActivity {
 
             if (!amountText.equals("")) {
                 if (!dateText.equals("")) {
+                    sdf = new SimpleDateFormat("HH-mm-ss", Locale.getDefault());
+                    now = Calendar.getInstance();
+                    finalDate = dateText + " " + sdf.format(now.getTime());
                     new saveTransaction(this).execute();
                 } else {
                     Snackbar.make(view, "Pick a Date", Snackbar.LENGTH_SHORT)
@@ -120,6 +137,7 @@ public class UserActivity extends AppCompatActivity {
             Intent i = new Intent(UserActivity.this, EditActivity.class);
             i.putExtra("vc", vcText.getText().toString().split(" ")[1]);
             startActivityForResult(i, EDIT_REQUEST);
+            isModified = true;
         });
 
         fabTrans.setOnClickListener(view -> {
@@ -127,6 +145,7 @@ public class UserActivity extends AppCompatActivity {
             i.putExtra("vc", vcText.getText().toString().split(" ")[1]);
             i.putExtra("username", nameText.getText());
             startActivity(i);
+            isModified = true;
         });
     }
 
@@ -153,9 +172,14 @@ public class UserActivity extends AppCompatActivity {
             day = i2;
             month = i1;
             year = i;
-            dateField.setText(i2 + "-" + (i1 + 1) + "-" + i);
+            if (i1 + 1 <= 9)
+                dateField.setText(i2 + "-0" + (i1 + 1) + "-" + i);
+            else
+                dateField.setText(i2 + "-" + (i1 + 1) + "-" + i);
+
         }, year, month, day);
         datePickerDialog.setTitle("Select Date");
+        datePickerDialog.create();
         datePickerDialog.show();
     }
 
@@ -199,12 +223,8 @@ public class UserActivity extends AppCompatActivity {
         }
 
         protected Void doInBackground(Void... args) {
-            SimpleDateFormat sdf = new SimpleDateFormat("hh-mm-ss", Locale.getDefault());
-            Calendar now = Calendar.getInstance();
-            sdf.format(now.getTime());
-
             db.addTransaction(new Transaction(vc, Integer.parseInt(amountText),
-                    dateText + " " + sdf.format(now.getTime())));
+                    finalDate), false);
             return null;
         }
 
@@ -213,7 +233,40 @@ public class UserActivity extends AppCompatActivity {
             if (dialog.isShowing()) {
                 dialog.dismiss();
             }
-            Snackbar.make(v, "Saved Transaction!!", Snackbar.LENGTH_LONG).show();
+            showDialog();
         }
+    }
+
+    public static String formatDate(String date, String initDateFormat, String endDateFormat) throws ParseException {
+
+        Date initDate = new SimpleDateFormat(initDateFormat, Locale.getDefault()).parse(date);
+        SimpleDateFormat formatter = new SimpleDateFormat(endDateFormat, Locale.getDefault());
+
+        return formatter.format(initDate);
+    }
+
+    public void showDialog() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.dialog, null);
+
+        TextView amount = (TextView) dialogView.findViewById(R.id.dialog_amount);
+        TextView date = (TextView) dialogView.findViewById(R.id.dialog_date);
+
+        amount.setText("Amount : " + Integer.parseInt(amountText));
+        date.setText(dateText + " " + sdf.format(now.getTime()));
+
+        dialogBuilder.setView(dialogView);
+        dialogBuilder.setTitle("Saved Transaction!!");
+        //dialogBuilder.setMessage("Enter text below");
+        dialogBuilder.setPositiveButton("Ok", (dialog, whichButton) -> {
+
+        });
+        dialogBuilder.setNegativeButton("Edit", (dialog, whichButton) -> {
+            fabTrans.callOnClick();
+        });
+        AlertDialog b = dialogBuilder.create();
+        b.show();
+
     }
 }

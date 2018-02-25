@@ -257,8 +257,8 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
     public void checkCollection() {
         db = new DBHandler(this);
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh-mm-ss", Locale.getDefault());
-        int amount = db.getCollection(sdf.format(chosenEndTime.getTime()),
-                sdf.format(chosenStartTime.getTime()));
+        int amount = db.getCollection(sdf.format(chosenStartTime.getTime()),
+                sdf.format(chosenEndTime.getTime()));
         total.setText(String.valueOf(amount));
     }
 

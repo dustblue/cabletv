@@ -55,7 +55,11 @@
         <activity
             android:name=".BackupRestoreActivity"
             android:label="@string/title_activity_backup_restore" />
-        <activity android:name=".InactiveActivity"></activity>
+        <activity android:name=".InactiveActivity"
+            android:label="@string/title_activity_inactive"/>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings" />
     </application>
 
 </manifest>

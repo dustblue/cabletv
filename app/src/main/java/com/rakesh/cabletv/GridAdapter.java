@@ -39,7 +39,7 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
             holder.itemImage.setImageResource(itemImages[position]);
             holder.itemImage.setColorFilter(generator.getRandomColor());
         }
-        else {
+        else if (!items[position].equals("")) {
             String [] tiles = items[position].trim().split(" ");
             StringBuilder t = new StringBuilder();
             int i=0;
@@ -59,6 +59,19 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                     .buildRound(t.toString(), generator.getRandomColor());
 
             holder.itemImage.setImageDrawable(drawable);
+        } else {
+            TextDrawable drawable = TextDrawable.builder()
+                    .beginConfig()
+                    .bold()
+                    .toUpperCase()
+                    .width(144)
+                    .height(144)
+                    .endConfig()
+                    .buildRect("N/A", generator.getRandomColor());
+
+            holder.itemImage.setImageDrawable(drawable);
+            holder.itemTitle.setText("N/A");
+
         }
     }
 
