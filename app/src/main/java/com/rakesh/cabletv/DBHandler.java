@@ -147,8 +147,11 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public String getLastPaid(String vc) {
         SQLiteDatabase db = this.getWritableDatabase();
+        //String selectQuery = "SELECT * FROM " + TRANSACTIONS_TABLE + " WHERE " +
+        //        KEY_VC + " = " + "\"" + vc + "\"" + " ORDER BY DATETIME(" + KEY_DATE + ") DESC";
         String selectQuery = "SELECT * FROM " + TRANSACTIONS_TABLE + " WHERE " +
-                KEY_VC + " = " + "\"" + vc + "\"" + " ORDER BY DATETIME(" + KEY_DATE + ") DESC";
+                KEY_VC + " = " + "\"" + vc + "\"" + " ORDER BY " +
+                "strftime('%d-%m-%Y %H-%M-%S', " + KEY_DATE + ") DESC";
         try (Cursor cursor = db.rawQuery(selectQuery, null)) {
             cursor.moveToFirst();
             return cursor.getString(3);
@@ -209,7 +212,10 @@ public class DBHandler extends SQLiteOpenHelper {
                     userEntry.setUser(user);
                     String lp = getLastPaid(cursor.getString(0));
                     userEntry.setLastPaidDate(lp);
-                    userEntry.setIfPaid(checkIfPaid(lp));
+                    if (lp.equals("Last Paid N/A"))
+                        userEntry.setIfPaid(false);
+                    else
+                        userEntry.setIfPaid(checkIfPaid(lp));
 
                     usersList.add(userEntry);
 
@@ -246,7 +252,10 @@ public class DBHandler extends SQLiteOpenHelper {
                     userEntry.setUser(user);
                     String lp = getLastPaid(cursor.getString(0));
                     userEntry.setLastPaidDate(lp);
-                    userEntry.setIfPaid(checkIfPaid(lp));
+                    if (lp.equals("Last Paid N/A"))
+                        userEntry.setIfPaid(false);
+                    else
+                        userEntry.setIfPaid(checkIfPaid(lp));
 
                     usersList.add(userEntry);
 
@@ -283,7 +292,10 @@ public class DBHandler extends SQLiteOpenHelper {
                     userEntry.setUser(user);
                     String temp = getLastPaid(cursor.getString(0));
                     userEntry.setLastPaidDate(temp);
-                    userEntry.setIfPaid(checkIfPaid(temp));
+                    if (temp.equals("Last Paid N/A"))
+                        userEntry.setIfPaid(false);
+                    else
+                        userEntry.setIfPaid(checkIfPaid(temp));
 
                     usersList.add(userEntry);
 
@@ -359,8 +371,11 @@ public class DBHandler extends SQLiteOpenHelper {
         List<Transaction> transactions = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
 
+//        Cursor cursor = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE + " WHERE " +
+//                KEY_VC + " = " + "\"" + vc + "\"" + " ORDER BY " + KEY_DATE + " DESC", null);
         Cursor cursor = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE + " WHERE " +
-                KEY_VC + " = " + "\"" + vc + "\"" + " ORDER BY " + KEY_DATE + " DESC", null);
+                KEY_VC + " = " + "\"" + vc + "\"" + " ORDER BY " +
+                "strftime('%d-%m-%Y %H-%M-%S', " + KEY_DATE + ") DESC", null);
         if (cursor.moveToFirst()) {
             do {
                 Transaction transaction = new Transaction();
@@ -540,5 +555,9 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
 
         return sum;
+    }
+
+    public void flushTransactions() {
+
     }
 }

@@ -41,5 +41,10 @@ public class ListActivity extends AppCompatActivity {
         tabs.setViewPager(pager);
     }
 
-
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_FIRST_USER);
+        //TODO fix
+        super.onBackPressed();
+    }
 }

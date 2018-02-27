@@ -172,7 +172,13 @@ public class UserActivity extends AppCompatActivity {
             day = i2;
             month = i1;
             year = i;
-            if (i1 + 1 <= 9)
+            if (i2 <= 9){
+                if (i1 + 1 <= 9)
+                    dateField.setText("0" + i2 + "-0" + (i1 + 1) + "-" + i);
+                else
+                    dateField.setText("0" + i2 + "-" + (i1 + 1) + "-" + i);
+            }
+            else if (i1 + 1 <= 9)
                 dateField.setText(i2 + "-0" + (i1 + 1) + "-" + i);
             else
                 dateField.setText(i2 + "-" + (i1 + 1) + "-" + i);

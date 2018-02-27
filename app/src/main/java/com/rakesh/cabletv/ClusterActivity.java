@@ -10,9 +10,11 @@ import android.widget.TextView;
 
 public class ClusterActivity extends AppCompatActivity {
 
+    public static final int RESULT_CLUS = 23;
     String[] clusters;
     DBHandler db;
     TextView emptyText;
+    GridAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +29,8 @@ public class ClusterActivity extends AppCompatActivity {
 
         db = new DBHandler(this);
         clusters = db.getClusters();
-        if(clusters != null) {
-            GridAdapter adapter = new GridAdapter(clusters, null);
+        if (clusters != null) {
+            adapter = new GridAdapter(clusters, null);
             recyclerView.setAdapter(adapter);
         } else {
             emptyText.setVisibility(View.VISIBLE);
@@ -39,8 +41,17 @@ public class ClusterActivity extends AppCompatActivity {
                         (view, position) -> {
                             Intent i = new Intent(ClusterActivity.this, ListActivity.class);
                             i.putExtra("cluster", clusters[position]);
-                            startActivity(i);
+                            startActivityForResult(i, RESULT_CLUS);
                         })
         );
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == RESULT_CLUS && resultCode == RESULT_FIRST_USER) {
+            clusters = db.getClusters();
+            adapter.notifyDataSetChanged();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
