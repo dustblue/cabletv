@@ -208,7 +208,7 @@ public class BackupRestoreActivity extends AppCompatActivity {
         protected void onPreExecute() {
             dialog.setMessage("Backing up...");
             dialog.setCancelable(false);
-            //dialog.show();
+            //transaction_dialog.show();
         }
 
         protected Void doInBackground(Void... args) {

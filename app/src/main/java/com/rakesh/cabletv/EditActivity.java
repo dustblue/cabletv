@@ -225,8 +225,8 @@ public class EditActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-//        if (dialog.isShowing()) {
-//            dialog.dismiss();
+//        if (transaction_dialog.isShowing()) {
+//            transaction_dialog.dismiss();
 //        }
         super.onStop();
     }

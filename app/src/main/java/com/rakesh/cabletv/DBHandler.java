@@ -4,9 +4,9 @@ package com.rakesh.cabletv;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,6 +36,7 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String KEY_ID = "id"; //Foreign Key for Log
     private static final String KEY_AMOUNT = "amount";
     private static final String KEY_DATE = "date";
+    private static final String KEY_NEW_DATE = "newdate";
 
     private static final String LOG_TABLE = "Log";
 
@@ -147,17 +148,16 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public String getLastPaid(String vc) {
         SQLiteDatabase db = this.getWritableDatabase();
-        //String selectQuery = "SELECT * FROM " + TRANSACTIONS_TABLE + " WHERE " +
-        //        KEY_VC + " = " + "\"" + vc + "\"" + " ORDER BY DATETIME(" + KEY_DATE + ") DESC";
-        String selectQuery = "SELECT * FROM " + TRANSACTIONS_TABLE + " WHERE " +
-                KEY_VC + " = " + "\"" + vc + "\"" + " ORDER BY " +
-                "strftime('%d-%m-%Y %H-%M-%S', " + KEY_DATE + ") DESC";
-        try (Cursor cursor = db.rawQuery(selectQuery, null)) {
-            cursor.moveToFirst();
-            return cursor.getString(3);
+
+        try (Cursor cursor = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE + " WHERE " +
+                KEY_VC + " = " + "\"" + vc + "\"" + " ORDER BY " + KEY_NEW_DATE + " DESC", null)) {
+            if (cursor.moveToFirst())
+                return cursor.getString(3);
+
         } catch (Exception e) {
             return "Last Paid N/A";
         }
+        return "Last Paid N/A";
     }
 
     public boolean checkIfPaid(String lastPaidDate) {
@@ -343,6 +343,7 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_VC, t.getVc());
         values.put(KEY_AMOUNT, t.getAmount());
         values.put(KEY_DATE, t.getDateTime());
+        values.put(KEY_NEW_DATE, t.getNewDateTime());
 
         db.insert(TRANSACTIONS_TABLE, null, values);
 
@@ -371,28 +372,20 @@ public class DBHandler extends SQLiteOpenHelper {
         List<Transaction> transactions = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
 
-//        Cursor cursor = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE + " WHERE " +
-//                KEY_VC + " = " + "\"" + vc + "\"" + " ORDER BY " + KEY_DATE + " DESC", null);
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE + " WHERE " +
-                KEY_VC + " = " + "\"" + vc + "\"" + " ORDER BY " +
-                "strftime('%d-%m-%Y %H-%M-%S', " + KEY_DATE + ") DESC", null);
-        if (cursor.moveToFirst()) {
-            do {
-                Transaction transaction = new Transaction();
+        try (Cursor cursor = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE + " WHERE " +
+                KEY_VC + " = " + "\"" + vc + "\"" + " ORDER BY " + KEY_NEW_DATE + " DESC", null)) {
+            if (cursor.moveToFirst()) {
+                do {
+                    Transaction transaction = new Transaction();
+                    transaction.setVc(cursor.getString(1));
+                    transaction.setAmount(cursor.getInt(2));
+                    transaction.setDateTime(cursor.getString(3));
 
-                transaction.setVc(cursor.getString(1));
-                transaction.setAmount(cursor.getInt(2));
-                transaction.setDateTime(cursor.getString(3));
+                    transactions.add(transaction);
+                } while (cursor.moveToNext());
+            }
 
-                for (int i = 0; i < 4; i++)
-                    Log.e(TAG, cursor.getString(i));
-                Log.e(TAG, "\n");
-
-                transactions.add(transaction);
-            } while (cursor.moveToNext());
         }
-
-        cursor.close();
         db.close();
 
         return transactions;
@@ -557,7 +550,39 @@ public class DBHandler extends SQLiteOpenHelper {
         return sum;
     }
 
-    public void flushTransactions() {
+    public void addColumn() {
+        SQLiteDatabase db = this.getWritableDatabase();
 
+        String ALTER_TRANSACTIONS_TABLE = "ALTER TABLE " + TRANSACTIONS_TABLE + " ADD "
+                + KEY_NEW_DATE + " DATETIME";
+
+        try {
+            db.execSQL(ALTER_TRANSACTIONS_TABLE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void reformatDates() {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try (Cursor cursor = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE, null)) {
+            if (cursor.moveToFirst()) {
+                do {
+                    Transaction t = new Transaction();
+                    cursor.getInt(0);
+                    t.setDateTime(cursor.getString(3));
+
+
+                    ContentValues values = new ContentValues();
+                    values.put(KEY_NEW_DATE, t.getNewDateTime());
+
+                    db.update(TRANSACTIONS_TABLE, values
+                            , KEY_ID + " = " + cursor.getInt(0), null);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

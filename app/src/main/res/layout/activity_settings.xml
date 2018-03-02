@@ -50,4 +50,38 @@
         android:text="@string/send_feedback"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/feedback_text" />
+
+    <TextView
+        android:id="@+id/developer_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/padding"
+        android:text="@string/experimental_settings"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/feedback" />
+
+    <Button
+        android:id="@+id/alter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/padding"
+        android:layout_marginStart="@dimen/padding"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:backgroundTint="@color/colorAccentLight"
+        android:text="@string/alter_table"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/developer_text" />
+
+    <Button
+        android:id="@+id/reformat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/padding"
+        android:layout_marginStart="@dimen/padding"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:backgroundTint="@color/colorAccentLight"
+        android:text="@string/reformat_dates"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/alter" />
+
 </android.support.constraint.ConstraintLayout>

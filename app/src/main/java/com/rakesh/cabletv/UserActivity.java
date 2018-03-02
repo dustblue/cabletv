@@ -254,7 +254,7 @@ public class UserActivity extends AppCompatActivity {
     public void showDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.dialog, null);
+        final View dialogView = inflater.inflate(R.layout.transaction_dialog, null);
 
         TextView amount = (TextView) dialogView.findViewById(R.id.dialog_amount);
         TextView date = (TextView) dialogView.findViewById(R.id.dialog_date);

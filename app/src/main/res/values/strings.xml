@@ -54,4 +54,7 @@
     <string name="remove_character">Remove unknown characters\nat the end of Names</string>
     <string name="report_error_and_send_feedback">Report errors\nSend feedback</string>
     <string name="send_feedback">Send Feedback</string>
+    <string name="alter_table">Alter Table</string>
+    <string name="reformat_dates">Reformat Dates</string>
+    <string name="experimental_settings">Experimental Settings below, Use with caution!!</string>
 </resources>
